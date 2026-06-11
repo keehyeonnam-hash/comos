@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#efe6d4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>강호풍운록 — AI 무협 로맨스 RPG</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: "Noto Serif KR", "Nanum Myeongjo", Georgia, serif;
+  background: #efe6d4; color: #2b2117; -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.wrap { max-width: 720px; margin: 0 auto; padding: 14px; }
+
+.title-bar { display:flex; align-items:center; justify-content:space-between; border-bottom: 2px solid #8a6d3b; padding-bottom: 10px; margin-bottom: 12px; gap:8px; }
+.title-bar h1 { font-size: 18px; letter-spacing: 2px; color:#5a3e1b; }
+.title-bar .sub { font-size: 11px; color:#8a6d3b; letter-spacing:1px; }
+.tbtns { display:flex; gap:6px; }
+.btn-ghost { background: transparent; border:1px solid #b9966a; color:#7a5a2e; border-radius:6px; padding:7px 10px; font-size:12px; cursor:pointer; font-family:inherit; }
+.btn-ghost:active { background:#e3d3b3; }
+
+.panel { background:#fbf5e6; border:1px solid #d8c39a; border-radius:10px; box-shadow: 0 2px 0 #d8c39a, 0 6px 18px rgba(120,90,40,.12); }
+
+#statsPanel { padding:13px 15px; margin-bottom:12px; }
+.stats-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.char-name { font-size:16px; font-weight:700; color:#5a3e1b; }
+.char-meta { font-size:11px; color:#9a7a45; text-align:right; }
+.bars { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; }
+.bar-row { display:flex; flex-direction:column; gap:3px; }
+.bar-label { display:flex; justify-content:space-between; font-size:12px; color:#6b5230; }
+.bar-track { height:9px; background:#e6d6b4; border-radius:6px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:6px; transition:width .5s ease; }
+.f-hp { background:linear-gradient(90deg,#b8453a,#e0735f); }
+.f-nei { background:linear-gradient(90deg,#3a6db8,#5fa6e0); }
+.f-mu  { background:linear-gradient(90deg,#7a4bb8,#a87fe0); }
+.f-charm { background:linear-gradient(90deg,#b83a86,#e06fb0); }
+.f-fame { background:linear-gradient(90deg,#b8923a,#e0c45f); }
+.f-aff { background:linear-gradient(90deg,#c43a5a,#f07f9a); }
+.aff-row { margin-top:10px; padding-top:10px; border-top:1px dashed #d8c39a; }
+.aff-name { font-weight:700; color:#a33a5a; }
+.inv { margin-top:10px; padding-top:10px; border-top:1px dashed #d8c39a; }
+.inv-title { font-size:12px; color:#8a6d3b; margin-bottom:6px; letter-spacing:1px; }
+.inv-items { display:flex; flex-wrap:wrap; gap:6px; }
+.chip { background:#f1e3c4; border:1px solid #cdae78; color:#6b5230; padding:3px 9px; border-radius:14px; font-size:12px; }
+.chip.empty { color:#b09a6e; border-style:dashed; }
+
+#storyPanel { padding:16px 18px; margin-bottom:12px; min-height:180px; }
+.story-scene { font-size:16px; line-height:1.9; white-space:pre-wrap; }
+.story-scene .you { color:#7a5a2e; font-style:italic; display:block; margin:14px 0 4px; padding-left:10px; border-left:3px solid #c9a86a; }
+.toast { font-size:12px; color:#9a5a2e; margin-top:10px; }
+.toast span { display:inline-block; background:#f3e2c2; border:1px solid #d8b87a; border-radius:12px; padding:2px 8px; margin:2px 4px 2px 0; }
+
+#actionPanel { padding:13px 15px; }
+.choices { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+.choice { text-align:left; background:#f7eed6; border:1px solid #d2b886; color:#4a3a20; padding:13px 14px; border-radius:8px; cursor:pointer; font-size:15px; font-family:inherit; transition:.12s; }
+.choice:active { background:#efe0bf; }
+.choice:disabled { opacity:.5; }
+.input-row { display:flex; gap:8px; }
+.input-row input { flex:1; padding:13px 14px; border:1px solid #d2b886; border-radius:8px; background:#fffdf6; font-size:15px; font-family:inherit; color:#2b2117; }
+.input-row input:focus { outline:none; border-color:#a87f3a; }
+.btn-send { background:#7a5a2e; color:#fbf5e6; border:none; border-radius:8px; padding:0 18px; font-size:15px; cursor:pointer; font-family:inherit; }
+.btn-send:active { background:#5a3e1b; }
+.btn-send:disabled { opacity:.5; }
+
+#setup, #config { padding:24px 20px; text-align:center; }
+#setup h2, #config h2 { font-size:24px; color:#5a3e1b; letter-spacing:4px; margin-bottom:6px; }
+#setup .tag, #config .tag { color:#9a7a45; font-size:13px; margin-bottom:20px; }
+.field { text-align:left; max-width:460px; margin:0 auto 16px; }
+.field label { display:block; font-size:13px; color:#6b5230; margin-bottom:6px; letter-spacing:1px; }
+.field input, .field select { width:100%; padding:12px 14px; border:1px solid #d2b886; border-radius:8px; background:#fffdf6; font-size:15px; font-family:inherit; color:#2b2117; }
+.field .hint { font-size:11px; color:#a08a5a; margin-top:6px; line-height:1.5; }
+.field .hint a { color:#7a5a2e; }
+.opt-row { display:flex; gap:8px; flex-wrap:wrap; }
+.opt { flex:1; min-width:120px; background:#f7eed6; border:1px solid #d2b886; color:#5a3e1b; padding:10px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; transition:.12s; }
+.opt.sel { background:#7a5a2e; color:#fbf5e6; border-color:#5a3e1b; }
+.opt small { display:block; color:#9a7a45; font-size:11px; margin-top:3px; }
+.opt.sel small { color:#e6d3a8; }
+.btn-start { margin-top:10px; background:#8a3a3a; color:#fbf5e6; border:none; border-radius:10px; padding:14px 40px; font-size:16px; letter-spacing:3px; cursor:pointer; font-family:inherit; }
+.btn-start:active { background:#6a2a2a; }
+.btn-start:disabled { opacity:.5; }
+
+.loading { display:flex; align-items:center; gap:10px; color:#8a6d3b; font-size:14px; padding:6px 2px; }
+.dot { width:8px; height:8px; border-radius:50%; background:#a87f3a; animation:bounce 1s infinite; }
+.dot:nth-child(2){animation-delay:.15s} .dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.5} 40%{transform:translateY(-6px);opacity:1} }
+.hidden { display:none !important; }
+.err { color:#a33; font-size:13px; padding:8px 2px; line-height:1.5; }
+@media (max-width:540px){ .bars{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- CONFIG: API 키 설정 -->
+  <div id="config" class="panel">
+    <h2>江湖風雲錄</h2>
+    <div class="tag">먼저 한 번만 — AI 연결을 설정해 주세요</div>
+
+    <div class="field">
+      <label>Gemini API 키</label>
+      <input id="cfgKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AIza... 형태의 키를 붙여넣으세요">
+      <div class="hint">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료로 발급할 수 있어요(로그인 후 'Create API key'). 키는 이 기기의 브라우저에만 저장되고 외부로 전송되지 않아요(게임 진행 시 Google 서버에만 직접 전달).
+      </div>
+    </div>
+
+    <div class="field">
+      <label>모델</label>
+      <select id="cfgModel">
+        <option value="gemini-2.5-flash">Flash — 무료·빠름 (추천)</option>
+        <option value="gemini-flash-latest">Flash(latest) — 무료 대안</option>
+        <option value="gemini-2.5-pro">Pro — 고품질 (유료/제한적)</option>
+        <option value="__custom__">직접 입력…</option>
+      </select>
+      <input id="cfgModelCustom" class="hidden" type="text" style="margin-top:8px;" placeholder="모델 이름 직접 입력 (예: gemini-3-flash)">
+      <div class="hint">무료로 충분히 즐기려면 Flash를 추천해요. Pro는 더 풍부하지만 무료 한도가 빡빡하고, 가진 Gemini 구독과 별개로 API 결제가 필요할 수 있어요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.</div>
+    </div>
+
+    <button id="btnSaveCfg" class="btn-start">저 장</button>
+    <div id="cfgErr" class="err hidden"></div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup" class="panel hidden">
+    <h2>江湖風雲錄</h2>
+    <div class="tag">강호풍운록 · AI가 매번 새로 써내려가는 무협 로맨스</div>
+
+    <div id="continueBox" class="panel hidden" style="padding:14px 16px;margin:0 auto 20px;max-width:460px;background:#f3e7c9;text-align:left;">
+      <div style="font-size:13px;color:#6b5230;margin-bottom:8px;">진행 중인 이야기가 있습니다.</div>
+      <div id="continueMeta" style="font-size:12px;color:#9a7a45;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button id="btnContinue" class="btn-send" style="padding:10px 16px;">이어하기</button>
+        <button id="btnNew" class="btn-ghost">새로 시작</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>당신의 이름 (협명)</label>
+      <input id="inName" placeholder="예: 백리서, 모용연, 진하랑" maxlength="12">
+    </div>
+    <div class="field">
+      <label>성별</label>
+      <div class="opt-row" id="genderOpts">
+        <button class="opt sel" data-g="남">남</button>
+        <button class="opt" data-g="여">여</button>
+        <button class="opt" data-g="무관">밝히지 않음</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>출신 — 시작 배경을 고르세요</label>
+      <div class="opt-row" id="originOpts">
+        <button class="opt sel" data-o="명문정파">명문정파 제자<small>내공·명성 우위</small></button>
+        <button class="opt" data-o="낭인검객">떠돌이 낭인<small>무공·매력 우위</small></button>
+        <button class="opt" data-o="몰락세가">몰락세가 후예<small>균형형, 복수의 길</small></button>
+      </div>
+    </div>
+    <button id="btnStart" class="btn-start">입 도 (入道)</button>
+    <div style="margin-top:14px;"><button id="btnEditCfg" class="btn-ghost">AI 연결 설정 변경</button></div>
+    <div id="setupErr" class="err hidden"></div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game" class="hidden">
+    <div class="title-bar">
+      <div>
+        <h1>江湖風雲錄</h1>
+        <div class="sub">강호풍운록 · 제 <span id="turnNo">1</span> 막</div>
+      </div>
+      <div class="tbtns">
+        <button id="btnCfg2" class="btn-ghost">⚙</button>
+        <button id="btnReset" class="btn-ghost">처음부터</button>
+      </div>
+    </div>
+
+    <div id="statsPanel" class="panel">
+      <div class="stats-head">
+        <div class="char-name" id="dispName">—</div>
+        <div class="char-meta" id="dispMeta">—</div>
+      </div>
+      <div class="bars">
+        <div class="bar-row"><div class="bar-label"><span>체력</span><span id="vHp">100</span></div><div class="bar-track"><div class="bar-fill f-hp" id="bHp" style="width:100%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>내공</span><span id="vNei">30</span></div><div class="bar-track"><div class="bar-fill f-nei" id="bNei" style="width:30%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>무공</span><span id="vMu">30</span></div><div class="bar-track"><div class="bar-fill f-mu" id="bMu" style="width:30%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>매력</span><span id="vCharm">30</span></div><div class="bar-track"><div class="bar-fill f-charm" id="bCharm" style="width:30%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>명성</span><span id="vFame">10</span></div><div class="bar-track"><div class="bar-fill f-fame" id="bFame" style="width:10%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>은전(兩)</span><span id="vGold">10</span></div><div class="bar-track"><div class="bar-fill f-fame" id="bGold" style="width:10%"></div></div></div>
+      </div>
+      <div class="aff-row hidden" id="affRow">
+        <div class="bar-label"><span>연심 · <span class="aff-name" id="affName"></span></span><span id="vAff">0</span></div>
+        <div class="bar-track"><div class="bar-fill f-aff" id="bAff" style="width:0%"></div></div>
+      </div>
+      <div class="inv">
+        <div class="inv-title">소지품</div>
+        <div class="inv-items" id="invItems"><span class="chip empty">비어 있음</span></div>
+      </div>
+    </div>
+
+    <div id="storyPanel" class="panel">
+      <div class="story-scene" id="scene"></div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div id="actionPanel" class="panel">
+      <div id="loading" class="loading hidden"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>천기를 읽는 중…</span></div>
+      <div class="choices" id="choices"></div>
+      <div class="input-row">
+        <input id="freeInput" placeholder="직접 행동을 입력… 예: 객잔 주인에게 소문을 묻는다" maxlength="200">
+        <button id="btnSend" class="btn-send">행동</button>
+      </div>
+      <div id="gameErr" class="err hidden"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SAVE_KEY = "ganghorpg_save_v1";
+  var CFG_KEY  = "ganghorpg_cfg_v1";
+  var TARGET_TURNS = 48;
+
+  var CFG = { key:"", model:"gemini-2.5-flash" };
+
+  var S = {
+    name:"", gender:"남", origin:"명문정파",
+    hp:100, hpMax:100, nei:30, mu:30, charm:30, fame:10, gold:10,
+    affName:"", aff:0, inv:[], turn:1,
+    phase:"발단", ended:false,
+    memory:"", lastScene:"", lastChoices:[], history:[]
+  };
+
+  function $(id){ return document.getElementById(id); }
+  function show(el){ el.classList.remove("hidden"); }
+  function hide(el){ el.classList.add("hidden"); }
+
+  // ---------- config persistence ----------
+  function loadCfg(){ try{ var r=localStorage.getItem(CFG_KEY); if(r){ var o=JSON.parse(r); CFG.key=o.key||""; CFG.model=o.model||"gemini-2.5-flash"; } }catch(e){} }
+  function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){} }
+
+  // ---------- game persistence ----------
+  function saveGame(){
+    try{ localStorage.setItem(SAVE_KEY, JSON.stringify({
+      name:S.name, gender:S.gender, origin:S.origin,
+      hp:S.hp, nei:S.nei, mu:S.mu, charm:S.charm, fame:S.fame, gold:S.gold,
+      affName:S.affName, aff:S.aff, inv:S.inv, turn:S.turn,
+      phase:S.phase, ended:S.ended,
+      memory:S.memory, lastScene:S.lastScene, lastChoices:S.lastChoices,
+      history:S.history.slice(-6)
+    })); }catch(e){}
+  }
+  function loadSave(){ try{ var r=localStorage.getItem(SAVE_KEY); return r? JSON.parse(r):null; }catch(e){ return null; } }
+  function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+  // ---------- config screen ----------
+  $("cfgModel").addEventListener("change", function(){
+    $("cfgModelCustom").classList.toggle("hidden", this.value!=="__custom__");
+  });
+  function openConfig(fromGame){
+    $("cfgKey").value = CFG.key;
+    var sel=$("cfgModel"); var found=false;
+    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===CFG.model){ sel.value=CFG.model; found=true; break; } }
+    if(!found && CFG.model){ sel.value="__custom__"; $("cfgModelCustom").classList.remove("hidden"); $("cfgModelCustom").value=CFG.model; }
+    hide($("setup")); hide($("game")); show($("config"));
+    $("btnSaveCfg").dataset.from = fromGame? "game":"setup";
+  }
+  $("btnSaveCfg").addEventListener("click", function(){
+    var k=$("cfgKey").value.trim();
+    if(!k){ var e=$("cfgErr"); e.textContent="API 키를 입력해 주세요. (Google AI Studio에서 무료 발급)"; show(e); return; }
+    var m=$("cfgModel").value;
+    if(m==="__custom__"){ m=$("cfgModelCustom").value.trim()||"gemini-2.5-flash"; }
+    CFG.key=k; CFG.model=m; saveCfg(); hide($("cfgErr"));
+    hide($("config"));
+    enterSetup();
+  });
+
+  // ---------- setup screen ----------
+  var gender="남", origin="명문정파";
+  function bindOpts(containerId, attr, cb){
+    var c=$(containerId);
+    c.querySelectorAll(".opt").forEach(function(b){
+      b.addEventListener("click", function(){
+        c.querySelectorAll(".opt").forEach(function(x){x.classList.remove("sel");});
+        b.classList.add("sel"); cb(b.getAttribute(attr));
+      });
+    });
+  }
+  bindOpts("genderOpts","data-g",function(v){gender=v;});
+  bindOpts("originOpts","data-o",function(v){origin=v;});
+
+  function enterSetup(){
+    show($("setup"));
+    var sv=loadSave();
+    if(sv && sv.name){
+      show($("continueBox"));
+      $("continueMeta").textContent = sv.name+" · "+sv.origin+" · "+(sv.ended?"완결":(sv.phase||"진행")+" "+(sv.turn||1)+"/"+TARGET_TURNS);
+    } else { hide($("continueBox")); }
+  }
+
+  $("btnEditCfg").addEventListener("click", function(){ openConfig(false); });
+  $("btnCfg2").addEventListener("click", function(){ openConfig(true); });
+
+  $("btnContinue").addEventListener("click", function(){ var sv=loadSave(); if(sv) resumeGame(sv); });
+  $("btnNew").addEventListener("click", function(){
+    if(confirm("새로 시작하면 저장된 이야기가 삭제됩니다. 계속할까요?")){ clearSave(); hide($("continueBox")); }
+  });
+
+  $("btnStart").addEventListener("click", function(){
+    var nm=$("inName").value.trim();
+    if(!nm){ var e=$("setupErr"); e.textContent="협명을 입력해 주세요."; show(e); return; }
+    S.name=nm; S.gender=gender; S.origin=origin;
+    var p=originPreset(origin);
+    S.nei=p.nei; S.mu=p.mu; S.charm=p.charm; S.fame=p.fame; S.gold=p.gold;
+    hide($("setup")); show($("game"));
+    renderStats(); startStory();
+  });
+  $("btnReset").addEventListener("click", function(){
+    if(confirm("정말 처음부터 다시 시작할까요? 저장된 이야기가 삭제됩니다.")){ clearSave(); location.reload(); }
+  });
+
+  function originPreset(o){
+    if(o==="명문정파") return {nei:45, mu:30, charm:25, fame:25, gold:15};
+    if(o==="낭인검객") return {nei:25, mu:45, charm:40, fame:8,  gold:6};
+    return {nei:32, mu:35, charm:32, fame:12, gold:20};
+  }
+
+  // ---------- rendering ----------
+  function clamp(n){ n=Math.round(n); return n<0?0:(n>100?100:n); }
+  function setBar(barId, valId, v){ $(barId).style.width=clamp(v)+"%"; $(valId).textContent=clamp(v); }
+  function renderStats(){
+    $("dispName").textContent=S.name;
+    $("dispMeta").textContent=S.origin+" · "+S.gender+" · "+(S.ended?"완결":(S.phase+" "+S.turn+"/"+TARGET_TURNS));
+    $("turnNo").textContent=S.turn;
+    setBar("bHp","vHp",S.hp); setBar("bNei","vNei",S.nei); setBar("bMu","vMu",S.mu);
+    setBar("bCharm","vCharm",S.charm); setBar("bFame","vFame",S.fame); setBar("bGold","vGold",S.gold);
+    if(S.affName){ show($("affRow")); $("affName").textContent=S.affName; setBar("bAff","vAff",S.aff); }
+    var box=$("invItems"); box.innerHTML="";
+    if(!S.inv.length){ box.innerHTML='<span class="chip empty">비어 있음</span>'; }
+    else S.inv.forEach(function(it){ var s=document.createElement("span"); s.className="chip"; s.textContent=it; box.appendChild(s); });
+  }
+  function renderScene(text){
+    var sc=$("scene"); sc.innerHTML="";
+    var node=document.createElement("div"); node.textContent=text; sc.appendChild(node);
+    sc.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  function renderChoices(list){
+    var c=$("choices"); c.innerHTML="";
+    (list||[]).forEach(function(ch){
+      var b=document.createElement("button"); b.className="choice"; b.textContent="❖ "+ch;
+      b.addEventListener("click", function(){ takeAction(ch); }); c.appendChild(b);
+    });
+  }
+  function renderEnding(kind){
+    var t=$("scene"); var d=document.createElement("div");
+    d.style.marginTop="18px"; d.style.paddingTop="14px"; d.style.borderTop="2px solid #8a6d3b";
+    d.style.textAlign="center"; d.style.color="#5a3e1b";
+    var head = kind==="사망" ? "終 — 무림행, 여기서 막을 내리다" : "完 — 한 편의 이야기가 끝나다";
+    d.innerHTML='<div style="font-size:18px;letter-spacing:4px;margin-bottom:6px;">'+head+'</div><div style="font-size:12px;color:#9a7a45;">제'+S.turn+'막까지의 여정이 마무리되었습니다.</div>';
+    var btn=document.createElement("button"); btn.className="btn-start"; btn.style.marginTop="14px"; btn.textContent="새 이야기 시작";
+    btn.addEventListener("click", function(){ clearSave(); location.reload(); });
+    d.appendChild(btn); t.appendChild(d);
+    $("freeInput").disabled=true; $("btnSend").disabled=true;
+    $("freeInput").placeholder="이야기가 완결되었습니다. '새 이야기 시작'을 눌러 주세요.";
+  }
+  function renderToast(effects){
+    var t=$("toast"); t.innerHTML="";
+    if(!effects) return;
+    var msgs=[]; var map={hp:"체력",nei:"내공",mu:"무공",charm:"매력",fame:"명성",gold:"은전",aff:"연심"};
+    ["hp","nei","mu","charm","fame","gold","aff"].forEach(function(k){
+      var d=effects[k]; if(typeof d==="number" && d!==0){ msgs.push(map[k]+" "+(d>0?"+":"")+d); }
+    });
+    (effects.add_items||[]).forEach(function(i){ msgs.push("획득: "+i); });
+    (effects.remove_items||[]).forEach(function(i){ msgs.push("잃음: "+i); });
+    msgs.forEach(function(m){ var s=document.createElement("span"); s.textContent=m; t.appendChild(s); });
+  }
+
+  function busy(on){
+    $("loading").classList.toggle("hidden", !on);
+    if(S.ended){ $("btnSend").disabled=true; $("freeInput").disabled=true; }
+    else { $("btnSend").disabled=on; $("freeInput").disabled=on; }
+    $("choices").querySelectorAll(".choice").forEach(function(b){b.disabled=on;});
+  }
+
+  // ---------- prompt ----------
+  function stateSummary(){
+    return "주인공: "+S.name+" ("+S.gender+", "+S.origin+")\n"+
+      "능력치 — 체력 "+S.hp+"/100, 내공 "+S.nei+", 무공 "+S.mu+", 매력 "+S.charm+", 명성 "+S.fame+", 은전 "+S.gold+"\n"+
+      (S.affName? ("연심 상대: "+S.affName+" (호감도 "+S.aff+"/100)\n") : "")+
+      "소지품: "+(S.inv.length? S.inv.join(", ") : "없음")+"\n현재 막: 제"+S.turn+"막";
+  }
+  function pacingHint(){
+    var t=S.turn, T=TARGET_TURNS;
+    if(t<=Math.round(T*0.18)) return "발단 단계입니다. 세계와 인물을 소개하고 주인공의 동기와 첫 사건을 제시하세요. 서두르지 말고 분위기를 쌓으세요.";
+    if(t<=Math.round(T*0.5))  return "전개 단계입니다. 갈등을 키우고 연심 상대와의 관계를 진전시키며 복선을 심으세요.";
+    if(t<=Math.round(T*0.72)) return "위기 단계입니다. 중대한 시련·배신·어려운 선택을 던지고 긴장을 끌어올리세요. 복선을 회수하기 시작하세요.";
+    if(t<=Math.round(T*0.9))  return "절정 단계입니다. 최대의 대결과 감정의 정점으로 모든 갈등을 한 점에 모으세요. 곧 결말로 향하세요.";
+    if(t<T+4) return "결말 단계입니다. 남은 실타래를 모두 수렴시켜 이번 1~3턴 안에 만족스럽게 완결(ending:true)하세요. 로맨스와 주된 갈등을 함께 매듭짓고 에필로그를 주세요.";
+    return "[강제 마무리] 이야기가 충분히 길어졌습니다. 이번 턴에 반드시 ending:true로 완결하고 충실한 에필로그를 작성하세요.";
+  }
+  var RULES =
+    "당신은 한국어 무협 로맨스 텍스트 RPG의 게임마스터이자, 한 편의 완결된 중편소설을 설계하는 작가입니다. 강호(江湖)를 배경으로 검과 내공·문파·은원·로맨스가 얽힌 이야기를 만듭니다.\n"+
+    "■ 작품 구조: 이 이야기는 약 "+TARGET_TURNS+"턴 안팎으로 완결되는 한 편의 작품입니다. 발단→전개→위기→절정→결말의 5단 구성을 따르세요. 매 턴 주어지는 '현재 단계/진행도'에 맞춰 밀도와 긴장을 조절하고, 후반엔 흩어진 실타래(주적·연심·비급·가문의 비밀 등)를 하나의 결말로 수렴시켜 목표 턴 부근에서 반드시 만족스럽게 마무리하세요.\n"+
+    "■ 서술: 1) 매 턴 한국어 5~8문장(한 단락)으로 생생히 묘사. 무협 정취를 살리되 과하지 않게. 2) 행동 결과를 능력치 변화(보통 -15~+15)로 반영, 이유 없는 변화 금지. 3) 연심 상대를 초중반에 등장시켜 단계적으로 진전, 결말에서 로맨스도 매듭. 처음 등장 시 romance_name에 이름. 4) 항상 2~4개 선택지 제시(자유 입력도 가능 전제), 단 결말 후엔 빈 배열. 5) 위험/전투 시 체력 감소, 0이면 사망 결말. 과도하게 선정적인 묘사는 피하고 분위기 위주. 6) 매 턴 memory에 핵심 연대기를 600자 이내로 갱신(인물·관계·사건·목표·복선·단서·세계관·연심 변화 보존). 7) phase에 현재 단계(발단/전개/위기/절정/결말), 완전히 끝나면 ending:true와 충실한 에필로그.\n"+
+    "effects 수치는 변화량(델타)이며 변화 없으면 0입니다.";
+
+  function buildPrompt(action){
+    var hist = S.history.slice(-4).map(function(h){ return (h.role==="you"?"[플레이어 행동] ":"[장면] ")+h.text; }).join("\n\n");
+    var p = RULES + "\n\n=== 현재 상태 ===\n"+stateSummary()+
+      "\n진행도: "+S.turn+"/"+TARGET_TURNS+"턴. 페이싱 지시: "+pacingHint()+
+      "\n\n=== 지금까지의 연대기 (장기 기억) ===\n"+(S.memory||"(아직 없음 — 이야기의 시작)")+
+      "\n\n=== 바로 직전 전개 ===\n"+(hist||"(없음)")+"\n\n";
+    if(action===null){
+      p += "=== 지시 ===\n게임의 첫 장면(발단)을 시작하세요. 주인공의 출신("+S.origin+")에 어울리는 도입부 사건과 함께, 약 "+TARGET_TURNS+"턴 뒤 완결될 한 편의 이야기로서 핵심 갈등의 씨앗과 강호로 나아가는 계기를 심으세요.";
+    } else {
+      p += "=== 플레이어의 이번 행동 ===\n\""+action+"\"\n\n이 행동의 결과로 이야기를 이어가세요. 능력치/소지품 변화를 effects에 반영하세요.";
+    }
+    return p;
+  }
+
+  // ---------- Gemini API ----------
+  var SCHEMA = {
+    type:"OBJECT",
+    properties:{
+      scene:{type:"STRING"},
+      choices:{type:"ARRAY", items:{type:"STRING"}},
+      effects:{type:"OBJECT", properties:{
+        hp:{type:"INTEGER"}, nei:{type:"INTEGER"}, mu:{type:"INTEGER"}, charm:{type:"INTEGER"},
+        fame:{type:"INTEGER"}, gold:{type:"INTEGER"}, aff:{type:"INTEGER"},
+        add_items:{type:"ARRAY", items:{type:"STRING"}},
+        remove_items:{type:"ARRAY", items:{type:"STRING"}},
+        romance_name:{type:"STRING"}
+      }},
+      memory:{type:"STRING"}, phase:{type:"STRING"}, ending:{type:"BOOLEAN"}
+    },
+    required:["scene","choices","effects","memory","phase","ending"]
+  };
+  var SAFETY = ["HARM_CATEGORY_HARASSMENT","HARM_CATEGORY_HATE_SPEECH","HARM_CATEGORY_SEXUALLY_EXPLICIT","HARM_CATEGORY_DANGEROUS_CONTENT"]
+    .map(function(c){ return {category:c, threshold:"BLOCK_ONLY_HIGH"}; });
+
+  async function geminiGenerate(prompt){
+    var url = "https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(CFG.model)+":generateContent?key="+encodeURIComponent(CFG.key);
+    var body = {
+      contents:[{ role:"user", parts:[{text:prompt}] }],
+      generationConfig:{ temperature:1.0, topP:0.95, maxOutputTokens:2048, responseMimeType:"application/json", responseSchema:SCHEMA },
+      safetySettings:SAFETY
+    };
+    var res = await fetch(url, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
+    if(!res.ok){
+      var t=""; try{ t=await res.text(); }catch(e){}
+      if(res.status===400 && /API key not valid|API_KEY_INVALID/i.test(t)) throw new Error("API 키가 올바르지 않아요. ⚙에서 키를 다시 확인해 주세요.");
+      if(res.status===404) throw new Error("모델 이름('"+CFG.model+"')을 찾을 수 없어요. ⚙에서 모델을 바꿔 주세요.");
+      if(res.status===429) throw new Error("무료 사용 한도(분당/일일)를 넘었어요. 잠시 후 다시 시도하거나 모델을 Flash로 바꿔 주세요.");
+      throw new Error("요청 실패("+res.status+"). "+t.slice(0,160));
+    }
+    var data = await res.json();
+    var cand = data && data.candidates && data.candidates[0];
+    if(!cand){ throw new Error("응답이 비어 있어요. 잠시 후 다시 시도해 주세요."); }
+    if(cand.finishReason==="SAFETY"){ throw new Error("이 전개가 안전 필터에 걸렸어요. 다른 행동으로 시도해 주세요."); }
+    var parts = cand.content && cand.content.parts || [];
+    var txt = parts.map(function(p){return p.text||"";}).join("");
+    return txt;
+  }
+
+  function parseJSON(raw){
+    var t=(raw||"").trim();
+    t=t.replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();
+    var i=t.indexOf("{"), j=t.lastIndexOf("}");
+    if(i>=0 && j>i) t=t.slice(i,j+1);
+    return JSON.parse(t);
+  }
+
+  async function callAI(action, attempt){
+    attempt=attempt||0;
+    try{ return parseJSON(await geminiGenerate(buildPrompt(action))); }
+    catch(err){
+      // JSON 파싱 실패 등 일시 오류만 1회 재시도 (네트워크/키 오류는 그대로 전달)
+      if(attempt<1 && /JSON|Unexpected|비어/i.test(err.message)) return callAI(action, attempt+1);
+      throw err;
+    }
+  }
+
+  function applyEffects(e){
+    if(!e) return;
+    if(typeof e.hp==="number") S.hp=clamp(S.hp+e.hp);
+    if(typeof e.nei==="number") S.nei=clamp(S.nei+e.nei);
+    if(typeof e.mu==="number") S.mu=clamp(S.mu+e.mu);
+    if(typeof e.charm==="number") S.charm=clamp(S.charm+e.charm);
+    if(typeof e.fame==="number") S.fame=clamp(S.fame+e.fame);
+    if(typeof e.gold==="number") S.gold=clamp(S.gold+e.gold);
+    if(e.romance_name && !S.affName) S.affName=String(e.romance_name);
+    if(typeof e.aff==="number" && S.affName) S.aff=clamp(S.aff+e.aff);
+    (e.add_items||[]).forEach(function(i){ i=String(i); if(i && S.inv.indexOf(i)<0) S.inv.push(i); });
+    (e.remove_items||[]).forEach(function(i){ i=String(i); var k=S.inv.indexOf(i); if(k>=0) S.inv.splice(k,1); });
+  }
+  function showErr(msg){ var e=$("gameErr"); e.textContent=msg; show(e); }
+
+  async function startStory(){
+    hide($("gameErr")); busy(true); renderScene("강호의 바람이 불어옵니다…");
+    try{
+      var data=await callAI(null);
+      if(typeof data.memory==="string" && data.memory.trim()) S.memory=data.memory.trim();
+      if(typeof data.phase==="string" && data.phase.trim()) S.phase=data.phase.trim();
+      S.history.push({role:"scene", text:data.scene||""});
+      applyEffects(data.effects);
+      S.lastScene=data.scene||""; S.lastChoices=data.choices||[];
+      renderScene(data.scene||"(장면을 불러오지 못했습니다)"); renderToast(data.effects);
+      renderChoices(data.choices); renderStats(); saveGame();
+    }catch(e){ showErr("이야기를 시작하지 못했습니다. "+e.message); }
+    finally{ busy(false); }
+  }
+
+  async function takeAction(action){
+    action=(action||"").trim(); if(!action || S.ended) return;
+    hide($("gameErr")); busy(true);
+    S.history.push({role:"you", text:action});
+    var sc=$("scene"); var you=document.createElement("div"); you.className="you"; you.textContent="▶ "+action; sc.appendChild(you);
+    $("toast").innerHTML="";
+    try{
+      var data=await callAI(action);
+      applyEffects(data.effects);
+      if(typeof data.memory==="string" && data.memory.trim()) S.memory=data.memory.trim();
+      if(typeof data.phase==="string" && data.phase.trim()) S.phase=data.phase.trim();
+      S.turn+=1;
+      S.history.push({role:"scene", text:data.scene||""});
+      S.lastScene=data.scene||""; S.lastChoices=(data.ending?[]:(data.choices||[]));
+      renderScene(data.scene||"(장면을 불러오지 못했습니다)"); renderToast(data.effects);
+      renderChoices(S.lastChoices);
+      if(data.ending===true || S.hp<=0){ S.ended=true; renderChoices([]); renderEnding(S.hp<=0?"사망":"완결"); }
+      renderStats(); saveGame();
+    }catch(e){
+      // 실패 시 방금 추가한 행동 표시 롤백 느낌은 두되, 히스토리는 유지(맥락). 재시도 안내.
+      showErr("이야기를 이어가지 못했습니다. '행동'을 다시 눌러 재시도해 주세요. ("+e.message+")");
+    }finally{ busy(false); }
+  }
+
+  function resumeGame(sv){
+    S.name=sv.name; S.gender=sv.gender; S.origin=sv.origin;
+    S.hp=sv.hp; S.nei=sv.nei; S.mu=sv.mu; S.charm=sv.charm; S.fame=sv.fame; S.gold=sv.gold;
+    S.affName=sv.affName||""; S.aff=sv.aff||0; S.inv=sv.inv||[]; S.turn=sv.turn||1;
+    S.phase=sv.phase||"발단"; S.ended=!!sv.ended;
+    S.memory=sv.memory||""; S.history=sv.history||[];
+    S.lastScene=sv.lastScene||""; S.lastChoices=sv.lastChoices||[];
+    hide($("setup")); hide($("config")); show($("game"));
+    renderStats(); renderScene(S.lastScene||"이야기를 이어갑니다…");
+    renderChoices(S.ended?[]:S.lastChoices);
+    if(S.ended) renderEnding("완결");
+  }
+
+  $("btnSend").addEventListener("click", function(){ var v=$("freeInput").value; $("freeInput").value=""; takeAction(v); });
+  $("freeInput").addEventListener("keydown", function(e){ if(e.key==="Enter"){ var v=$("freeInput").value; $("freeInput").value=""; takeAction(v); } });
+
+  // ---------- boot ----------
+  loadCfg();
+  if(CFG.key){ hide($("config")); enterSetup(); }
+  else { show($("config")); }
+
+})();
+</script>
+</body>
+</html>
