@@ -119,23 +119,24 @@ body{
     <div class="tag">먼저 한 번만 — AI 연결을 설정해 주세요</div>
 
     <div class="field">
-      <label>Gemini API 키</label>
-      <input id="cfgKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AIza... 형태의 키를 붙여넣으세요">
-      <div class="hint">
-        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료로 발급할 수 있어요(로그인 후 'Create API key'). 키는 이 기기의 브라우저에만 저장되며, 게임 진행 시 Google 서버로만 직접 전달됩니다.
+      <label>AI 제공자</label>
+      <div class="opt-row" id="providerOpts">
+        <button class="opt sel" data-p="gemini">Gemini<small>Google · 무료 한도</small></button>
+        <button class="opt" data-p="claude">Claude<small>Anthropic · 유료·고품질</small></button>
       </div>
     </div>
 
     <div class="field">
+      <label id="cfgKeyLabel">API 키</label>
+      <input id="cfgKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="">
+      <div class="hint" id="cfgKeyHint"></div>
+    </div>
+
+    <div class="field">
       <label>모델</label>
-      <select id="cfgModel">
-        <option value="gemini-2.5-flash">Flash — 무료·빠름 (추천)</option>
-        <option value="gemini-flash-latest">Flash(latest) — 무료 대안</option>
-        <option value="gemini-2.5-pro">Pro — 고품질 (유료/제한적)</option>
-        <option value="__custom__">직접 입력…</option>
-      </select>
-      <input id="cfgModelCustom" class="hidden" type="text" style="margin-top:8px;" placeholder="모델 이름 직접 입력 (예: gemini-3-flash)">
-      <div class="hint">무료로 즐기려면 Flash를 추천해요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.</div>
+      <select id="cfgModel"></select>
+      <input id="cfgModelCustom" class="hidden" type="text" style="margin-top:8px;" placeholder="모델 이름 직접 입력">
+      <div class="hint" id="cfgModelHint"></div>
     </div>
 
     <button id="btnSaveCfg" class="btn-start">저 장</button>
@@ -233,7 +234,31 @@ body{
   var CFG_KEY  = "storyhall_cfg_v1";
   var TARGET_TURNS = 48;
 
-  var CFG = { key:"", model:"gemini-2.5-flash" };
+  var PROVIDERS = {
+    gemini:{
+      keyLabel:"Gemini API 키",
+      keyPlaceholder:"AIza... 형태의 키를 붙여넣으세요",
+      keyHint:'<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료로 발급할 수 있어요(로그인 후 \'Create API key\'). 키는 이 기기의 브라우저에만 저장되며, 게임 진행 시 Google 서버로만 직접 전달됩니다.',
+      modelHint:"무료로 즐기려면 Flash를 추천해요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.",
+      models:[["gemini-2.5-flash","Flash — 무료·빠름 (추천)"],["gemini-flash-latest","Flash(latest) — 무료 대안"],["gemini-2.5-pro","Pro — 고품질 (유료/제한적)"]],
+      defModel:"gemini-2.5-flash"
+    },
+    claude:{
+      keyLabel:"Claude API 키",
+      keyPlaceholder:"sk-ant-... 형태의 키를 붙여넣으세요",
+      keyHint:'<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic 콘솔</a>에서 발급할 수 있어요(유료 — 쓴 만큼 과금, 무료 한도는 없어요). 키는 이 기기의 브라우저에만 저장되며, 게임 진행 시 Anthropic 서버로만 직접 전달됩니다.',
+      modelHint:"품질 우선이면 Opus, 가성비·속도면 Sonnet/Haiku를 추천해요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.",
+      models:[["claude-opus-4-8","Opus 4.8 — 최고 품질 (추천)"],["claude-sonnet-4-6","Sonnet 4.6 — 균형·저렴"],["claude-haiku-4-5","Haiku 4.5 — 가장 빠르고 저렴"]],
+      defModel:"claude-opus-4-8"
+    }
+  };
+
+  var CFG = {
+    provider:"gemini",
+    gemini:{ key:"", model:"gemini-2.5-flash" },
+    claude:{ key:"", model:"claude-opus-4-8" }
+  };
+  function prov(){ return CFG[CFG.provider]; }
 
   // ---------- color palette for stat bars ----------
   var C = {
@@ -355,7 +380,16 @@ body{
   }
 
   // ---------- persistence ----------
-  function loadCfg(){ try{ var r=localStorage.getItem(CFG_KEY); if(r){ var o=JSON.parse(r); CFG.key=o.key||""; CFG.model=o.model||"gemini-2.5-flash"; } }catch(e){} }
+  function loadCfg(){
+    try{
+      var r=localStorage.getItem(CFG_KEY); if(!r) return; var o=JSON.parse(r);
+      if(o.provider==="claude"||o.provider==="gemini") CFG.provider=o.provider;
+      if(o.gemini){ CFG.gemini.key=o.gemini.key||""; CFG.gemini.model=o.gemini.model||"gemini-2.5-flash"; }
+      if(o.claude){ CFG.claude.key=o.claude.key||""; CFG.claude.model=o.claude.model||"claude-opus-4-8"; }
+      // migrate old single-provider shape {key,model}
+      if(!o.gemini && !o.claude && o.key){ CFG.provider="gemini"; CFG.gemini.key=o.key; CFG.gemini.model=o.model||"gemini-2.5-flash"; }
+    }catch(e){}
+  }
   function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){} }
 
   function saveGame(){
@@ -374,20 +408,40 @@ body{
   $("cfgModel").addEventListener("change", function(){
     $("cfgModelCustom").classList.toggle("hidden", this.value!=="__custom__");
   });
+  function applyProviderUI(p){
+    CFG.provider=p; var def=PROVIDERS[p]; var cur=CFG[p];
+    $("providerOpts").querySelectorAll(".opt").forEach(function(b){ b.classList.toggle("sel", b.getAttribute("data-p")===p); });
+    $("cfgKeyLabel").textContent=def.keyLabel;
+    $("cfgKey").placeholder=def.keyPlaceholder;
+    $("cfgKeyHint").innerHTML=def.keyHint;
+    $("cfgModelHint").textContent=def.modelHint;
+    $("cfgKey").value=cur.key;
+    // rebuild model options
+    var sel=$("cfgModel"); sel.innerHTML="";
+    var found=false;
+    def.models.forEach(function(m){ var o=document.createElement("option"); o.value=m[0]; o.textContent=m[1]; sel.appendChild(o); if(m[0]===cur.model) found=true; });
+    var co=document.createElement("option"); co.value="__custom__"; co.textContent="직접 입력…"; sel.appendChild(co);
+    if(found){ sel.value=cur.model; $("cfgModelCustom").classList.add("hidden"); }
+    else if(cur.model){ sel.value="__custom__"; $("cfgModelCustom").classList.remove("hidden"); $("cfgModelCustom").value=cur.model; }
+    else { sel.value=def.defModel; $("cfgModelCustom").classList.add("hidden"); }
+  }
+  function stashConfigFields(){
+    var cur=CFG[CFG.provider]; cur.key=$("cfgKey").value.trim();
+    var m=$("cfgModel").value; if(m==="__custom__") m=$("cfgModelCustom").value.trim()||PROVIDERS[CFG.provider].defModel;
+    cur.model=m;
+  }
+  $("providerOpts").querySelectorAll(".opt").forEach(function(b){
+    b.addEventListener("click", function(){ stashConfigFields(); applyProviderUI(b.getAttribute("data-p")); });
+  });
   function openConfig(){
-    $("cfgKey").value = CFG.key;
-    var sel=$("cfgModel"); var found=false;
-    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===CFG.model){ sel.value=CFG.model; found=true; break; } }
-    if(!found && CFG.model){ sel.value="__custom__"; $("cfgModelCustom").classList.remove("hidden"); $("cfgModelCustom").value=CFG.model; }
+    applyProviderUI(CFG.provider);
     hide($("setup")); hide($("game")); hide($("select")); show($("config"));
     applyTheme(DEFAULT_THEME);
   }
   $("btnSaveCfg").addEventListener("click", function(){
-    var k=$("cfgKey").value.trim();
-    if(!k){ var e=$("cfgErr"); e.textContent="API 키를 입력해 주세요. (Google AI Studio에서 무료 발급)"; show(e); return; }
-    var m=$("cfgModel").value;
-    if(m==="__custom__"){ m=$("cfgModelCustom").value.trim()||"gemini-2.5-flash"; }
-    CFG.key=k; CFG.model=m; saveCfg(); hide($("cfgErr"));
+    stashConfigFields();
+    if(!prov().key){ var e=$("cfgErr"); e.textContent="API 키를 입력해 주세요."; show(e); return; }
+    saveCfg(); hide($("cfgErr"));
     hide($("config"));
     enterSelect();
   });
@@ -611,8 +665,33 @@ body{
   var SAFETY = ["HARM_CATEGORY_HARASSMENT","HARM_CATEGORY_HATE_SPEECH","HARM_CATEGORY_SEXUALLY_EXPLICIT","HARM_CATEGORY_DANGEROUS_CONTENT"]
     .map(function(c){ return {category:c, threshold:"BLOCK_ONLY_HIGH"}; });
 
+  // JSON Schema (standard) for Claude structured outputs
+  function buildClaudeSchema(){
+    var props={};
+    WORLD.stats.forEach(function(s){ props[s.key]={type:"integer"}; });
+    props.aff={type:"integer"};
+    props.add_items={type:"array", items:{type:"string"}};
+    props.remove_items={type:"array", items:{type:"string"}};
+    props.romance_name={type:"string"};
+    return {
+      type:"object", additionalProperties:false,
+      properties:{
+        scene:{type:"string"},
+        choices:{type:"array", items:{type:"string"}},
+        effects:{type:"object", additionalProperties:false, properties:props},
+        memory:{type:"string"}, phase:{type:"string"}, ending:{type:"boolean"}
+      },
+      required:["scene","choices","effects","memory","phase","ending"]
+    };
+  }
+
+  async function generate(prompt){
+    return CFG.provider==="claude" ? claudeGenerate(prompt) : geminiGenerate(prompt);
+  }
+
   async function geminiGenerate(prompt){
-    var url = "https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(CFG.model)+":generateContent?key="+encodeURIComponent(CFG.key);
+    var m=CFG.gemini.model, k=CFG.gemini.key;
+    var url = "https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent?key="+encodeURIComponent(k);
     var body = {
       contents:[{ role:"user", parts:[{text:prompt}] }],
       generationConfig:{ temperature:1.0, topP:0.95, maxOutputTokens:2048, responseMimeType:"application/json", responseSchema:buildSchema() },
@@ -622,7 +701,7 @@ body{
     if(!res.ok){
       var t=""; try{ t=await res.text(); }catch(e){}
       if(res.status===400 && /API key not valid|API_KEY_INVALID/i.test(t)) throw new Error("API 키가 올바르지 않아요. ⚙에서 키를 다시 확인해 주세요.");
-      if(res.status===404) throw new Error("모델 이름('"+CFG.model+"')을 찾을 수 없어요. ⚙에서 모델을 바꿔 주세요.");
+      if(res.status===404) throw new Error("모델 이름('"+m+"')을 찾을 수 없어요. ⚙에서 모델을 바꿔 주세요.");
       if(res.status===429) throw new Error("무료 사용 한도(분당/일일)를 넘었어요. 잠시 후 다시 시도하거나 모델을 Flash로 바꿔 주세요.");
       throw new Error("요청 실패("+res.status+"). "+t.slice(0,160));
     }
@@ -632,6 +711,39 @@ body{
     if(cand.finishReason==="SAFETY"){ throw new Error("이 전개가 안전 필터에 걸렸어요. 다른 행동으로 시도해 주세요."); }
     var parts = cand.content && cand.content.parts || [];
     var txt = parts.map(function(p){return p.text||"";}).join("");
+    return txt;
+  }
+
+  async function claudeGenerate(prompt){
+    var m=CFG.claude.model, k=CFG.claude.key;
+    var body = {
+      model:m, max_tokens:4096,
+      messages:[{ role:"user", content:prompt }],
+      output_config:{ format:{ type:"json_schema", schema:buildClaudeSchema() } }
+    };
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":k,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
+      body:JSON.stringify(body)
+    });
+    if(!res.ok){
+      var t=""; try{ t=await res.text(); }catch(e){}
+      if(res.status===401) throw new Error("API 키가 올바르지 않아요. ⚙에서 키를 다시 확인해 주세요.");
+      if(res.status===404 || /not_found|model:/i.test(t)) throw new Error("모델 이름('"+m+"')을 찾을 수 없어요. ⚙에서 모델을 바꿔 주세요.");
+      if(res.status===400 && /credit balance|billing/i.test(t)) throw new Error("Anthropic 잔액이 부족해요. 콘솔에서 크레딧을 충전해 주세요.");
+      if(res.status===429) throw new Error("요청 한도를 넘었어요. 잠시 후 다시 시도해 주세요.");
+      throw new Error("요청 실패("+res.status+"). "+t.slice(0,160));
+    }
+    var data = await res.json();
+    if(data && data.stop_reason==="refusal"){ throw new Error("이 전개가 안전 정책에 걸렸어요. 다른 행동으로 시도해 주세요."); }
+    var content = (data && data.content) || [];
+    var txt = content.filter(function(b){return b.type==="text";}).map(function(b){return b.text||"";}).join("");
+    if(!txt){ throw new Error("응답이 비어 있어요. 잠시 후 다시 시도해 주세요."); }
     return txt;
   }
 
@@ -645,7 +757,7 @@ body{
 
   async function callAI(action, attempt){
     attempt=attempt||0;
-    try{ return parseJSON(await geminiGenerate(buildPrompt(action))); }
+    try{ return parseJSON(await generate(buildPrompt(action))); }
     catch(err){
       if(attempt<1 && /JSON|Unexpected|비어/i.test(err.message)) return callAI(action, attempt+1);
       throw err;
@@ -722,8 +834,8 @@ body{
   // ---------- boot ----------
   loadCfg();
   applyTheme(DEFAULT_THEME);
-  if(CFG.key){ hide($("config")); enterSelect(); }
-  else { show($("config")); }
+  if(prov().key){ hide($("config")); enterSelect(); }
+  else { applyProviderUI(CFG.provider); show($("config")); }
 
 })();
 </script>
