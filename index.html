@@ -121,12 +121,13 @@ body{
     <div class="field">
       <label>AI 제공자</label>
       <div class="opt-row" id="providerOpts">
-        <button class="opt sel" data-p="claude">Claude<small>Anthropic · 유료·고품질</small></button>
+        <button class="opt sel" data-p="local">기기 내 AI<small>무료·무제한·키 불필요</small></button>
         <button class="opt" data-p="gemini">Gemini<small>Google · 무료 한도</small></button>
+        <button class="opt" data-p="claude">Claude<small>Anthropic · 유료·고품질</small></button>
       </div>
     </div>
 
-    <div class="field">
+    <div class="field" id="keyField">
       <label id="cfgKeyLabel">API 키</label>
       <input id="cfgKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="">
       <div class="hint" id="cfgKeyHint"></div>
@@ -214,7 +215,7 @@ body{
     </div>
 
     <div id="actionPanel" class="panel">
-      <div id="loading" class="loading hidden"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>이야기를 엮는 중…</span></div>
+      <div id="loading" class="loading hidden"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span id="loadingMsg">이야기를 엮는 중…</span></div>
       <div class="choices" id="choices"></div>
       <div class="input-row">
         <input id="freeInput" placeholder="직접 행동을 입력…" maxlength="200">
@@ -235,6 +236,13 @@ body{
   var TARGET_TURNS = 48;
 
   var PROVIDERS = {
+    local:{
+      keyless:true,
+      keyLabel:"", keyPlaceholder:"", keyHint:"",
+      modelHint:"기기 안에서 AI가 직접 돌아갑니다 — 결제도 키도, 사용 한도도 없어요. 단, ① 데스크톱 Chrome/Edge 같은 최신 브라우저(WebGPU) 필요, ② 처음 한 번 모델 파일(약 1~2GB)을 내려받고, ③ 서버형(Claude/Gemini)보다 느리고 품질이 낮을 수 있어요. 사양이 부족하면 Gemini(무료)를 권해요.",
+      models:[["Qwen2.5-3B-Instruct-q4f16_1-MLC","Qwen2.5 3B — 한국어 양호 (추천)"],["Llama-3.2-3B-Instruct-q4f16_1-MLC","Llama 3.2 3B — 영어 강함"],["Qwen2.5-1.5B-Instruct-q4f16_1-MLC","Qwen2.5 1.5B — 저사양·빠름·품질↓"]],
+      defModel:"Qwen2.5-3B-Instruct-q4f16_1-MLC"
+    },
     gemini:{
       keyLabel:"Gemini API 키",
       keyPlaceholder:"AIza... 형태의 키를 붙여넣으세요",
@@ -254,11 +262,13 @@ body{
   };
 
   var CFG = {
-    provider:"claude",
+    provider:"local",
+    local:{ key:"", model:"Qwen2.5-3B-Instruct-q4f16_1-MLC" },
     gemini:{ key:"", model:"gemini-2.5-flash" },
     claude:{ key:"", model:"claude-opus-4-8" }
   };
   function prov(){ return CFG[CFG.provider]; }
+  function keyless(){ return !!PROVIDERS[CFG.provider].keyless; }
 
   // ---------- color palette for stat bars ----------
   var C = {
@@ -383,7 +393,8 @@ body{
   function loadCfg(){
     try{
       var r=localStorage.getItem(CFG_KEY); if(!r) return; var o=JSON.parse(r);
-      if(o.provider==="claude"||o.provider==="gemini") CFG.provider=o.provider;
+      if(o.provider==="claude"||o.provider==="gemini"||o.provider==="local") CFG.provider=o.provider;
+      if(o.local){ CFG.local.model=o.local.model||CFG.local.model; }
       if(o.gemini){ CFG.gemini.key=o.gemini.key||""; CFG.gemini.model=o.gemini.model||"gemini-2.5-flash"; }
       if(o.claude){ CFG.claude.key=o.claude.key||""; CFG.claude.model=o.claude.model||"claude-opus-4-8"; }
       // migrate old single-provider shape {key,model}
@@ -411,11 +422,12 @@ body{
   function applyProviderUI(p){
     CFG.provider=p; var def=PROVIDERS[p]; var cur=CFG[p];
     $("providerOpts").querySelectorAll(".opt").forEach(function(b){ b.classList.toggle("sel", b.getAttribute("data-p")===p); });
+    $("keyField").classList.toggle("hidden", !!def.keyless);
     $("cfgKeyLabel").textContent=def.keyLabel;
     $("cfgKey").placeholder=def.keyPlaceholder;
     $("cfgKeyHint").innerHTML=def.keyHint;
     $("cfgModelHint").textContent=def.modelHint;
-    $("cfgKey").value=cur.key;
+    $("cfgKey").value=cur.key||"";
     // rebuild model options
     var sel=$("cfgModel"); sel.innerHTML="";
     var found=false;
@@ -426,10 +438,11 @@ body{
     else { sel.value=def.defModel; $("cfgModelCustom").classList.add("hidden"); }
   }
   function stashConfigFields(){
-    var cur=CFG[CFG.provider]; cur.key=$("cfgKey").value.trim();
+    var cur=CFG[CFG.provider]; if(!keyless()) cur.key=$("cfgKey").value.trim();
     var m=$("cfgModel").value; if(m==="__custom__") m=$("cfgModelCustom").value.trim()||PROVIDERS[CFG.provider].defModel;
     cur.model=m;
   }
+  function setLoadingMsg(s){ var e=$("loadingMsg"); if(e) e.textContent=s; }
   $("providerOpts").querySelectorAll(".opt").forEach(function(b){
     b.addEventListener("click", function(){ stashConfigFields(); applyProviderUI(b.getAttribute("data-p")); });
   });
@@ -440,7 +453,7 @@ body{
   }
   $("btnSaveCfg").addEventListener("click", function(){
     stashConfigFields();
-    if(!prov().key){ var e=$("cfgErr"); e.textContent="API 키를 입력해 주세요."; show(e); return; }
+    if(!keyless() && !prov().key){ var e=$("cfgErr"); e.textContent="API 키를 입력해 주세요."; show(e); return; }
     saveCfg(); hide($("cfgErr"));
     hide($("config"));
     enterSelect();
@@ -630,7 +643,8 @@ body{
   }
 
   function buildPrompt(action){
-    var hist = S.history.slice(-4).map(function(h){ return (h.role==="you"?"[플레이어 행동] ":"[장면] ")+h.text; }).join("\n\n");
+    var hn = CFG.provider==="local" ? 2 : 4; // 기기 내 소형 모델은 문맥이 작아 직전 전개를 줄임
+    var hist = S.history.slice(-hn).map(function(h){ return (h.role==="you"?"[플레이어 행동] ":"[장면] ")+h.text; }).join("\n\n");
     var p = rules() + "\n\n=== 현재 상태 ===\n"+stateSummary()+
       "\n진행도: "+S.turn+"/"+TARGET_TURNS+"턴. 페이싱 지시: "+pacingHint()+
       "\n\n=== 지금까지의 연대기 (장기 기억) ===\n"+(S.memory||"(아직 없음 — 이야기의 시작)")+
@@ -639,6 +653,14 @@ body{
       p += "=== 지시 ===\n게임의 첫 장면(발단)을 시작하세요. 주인공의 출신("+findOriginLabel(S.origin)+")에 어울리는 도입부 사건과 함께, 약 "+TARGET_TURNS+"턴 뒤 완결될 한 편의 이야기로서 핵심 갈등의 씨앗과 모험으로 나아가는 계기를 심으세요.";
     } else {
       p += "=== 플레이어의 이번 행동 ===\n\""+action+"\"\n\n이 행동의 결과로 이야기를 이어가세요. 능력치/소지품 변화를 effects에 반영하세요.";
+    }
+    if(CFG.provider==="local"){
+      var keys=WORLD.stats.map(function(s){return s.key;}).join(", ");
+      p += "\n\n[출력 형식] 설명 없이 아래 형태의 JSON 객체 하나만 출력하세요(코드블록 금지):\n"+
+        '{"scene":"이번 장면, 한국어 5~8문장","choices":["선택지1","선택지2","선택지3"],'+
+        '"effects":{"'+(WORLD.stats[0]?WORLD.stats[0].key:"hp")+'":0,"aff":0,"add_items":[],"remove_items":[],"romance_name":""},'+
+        '"memory":"갱신된 연대기 600자 이내","phase":"발단","ending":false}\n'+
+        "effects의 능력치 키는 다음만 사용: "+keys+" (변화 없으면 0 또는 생략). 결말이면 ending을 true로, choices는 빈 배열로.";
     }
     return p;
   }
@@ -686,7 +708,44 @@ body{
   }
 
   async function generate(prompt){
-    return CFG.provider==="claude" ? claudeGenerate(prompt) : geminiGenerate(prompt);
+    if(CFG.provider==="local") return localGenerate(prompt);
+    if(CFG.provider==="claude") return claudeGenerate(prompt);
+    return geminiGenerate(prompt);
+  }
+
+  // ---------- in-browser model (WebLLM, free & unlimited) ----------
+  var LOCAL_ENGINE=null, LOCAL_MODEL_LOADED="";
+  async function ensureLocalEngine(){
+    if(!("gpu" in navigator)) throw new Error("이 브라우저/기기는 기기 내 AI(WebGPU)를 지원하지 않아요. 데스크톱 Chrome 또는 Edge에서 열거나, ⚙에서 Gemini(무료)로 바꿔 주세요.");
+    var model=CFG.local.model;
+    if(LOCAL_ENGINE && LOCAL_MODEL_LOADED===model) return LOCAL_ENGINE;
+    setLoadingMsg("AI 모델 준비 중… (처음 한 번만 내려받아요)");
+    var webllm;
+    try{ webllm=await import("https://esm.run/@mlc-ai/web-llm"); }
+    catch(e){ throw new Error("AI 모델 로더를 불러오지 못했어요. 인터넷 연결을 확인해 주세요."); }
+    try{
+      LOCAL_ENGINE=await webllm.CreateMLCEngine(model, { initProgressCallback:function(p){
+        var pct = p && typeof p.progress==="number" ? Math.round(p.progress*100) : null;
+        setLoadingMsg(pct!=null ? ("AI 모델 내려받는 중… "+pct+"% (처음 한 번만)") : (p && p.text ? p.text : "AI 모델 준비 중…"));
+      }});
+    }catch(e){
+      LOCAL_ENGINE=null;
+      throw new Error("AI 모델을 불러오지 못했어요. 기기 사양이 부족할 수 있어요 — ⚙에서 더 작은 모델(1.5B)이나 Gemini로 바꿔 보세요. ("+(e&&e.message||e)+")");
+    }
+    LOCAL_MODEL_LOADED=model;
+    setLoadingMsg("이야기를 엮는 중…");
+    return LOCAL_ENGINE;
+  }
+  async function localGenerate(prompt){
+    var eng=await ensureLocalEngine();
+    var r=await eng.chat.completions.create({
+      messages:[{ role:"user", content:prompt }],
+      temperature:1.0, top_p:0.95, max_tokens:1600,
+      response_format:{ type:"json_object" }
+    });
+    var txt = r && r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content || "";
+    if(!txt) throw new Error("응답이 비어 있어요. 다시 시도해 주세요.");
+    return txt;
   }
 
   async function geminiGenerate(prompt){
@@ -834,7 +893,7 @@ body{
   // ---------- boot ----------
   loadCfg();
   applyTheme(DEFAULT_THEME);
-  if(prov().key){ hide($("config")); enterSelect(); }
+  if(keyless() || prov().key){ hide($("config")); enterSelect(); }
   else { applyProviderUI(CFG.provider); show($("config")); }
 
 })();
