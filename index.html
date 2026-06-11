@@ -3,94 +3,111 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#efe6d4">
+<meta name="theme-color" content="#14131a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>강호풍운록 — AI 무협 로맨스 RPG</title>
+<title>이야기관 — AI 사용자 참여형 웹소설</title>
 <style>
-:root { color-scheme: light; }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body {
-  font-family: "Noto Serif KR", "Nanum Myeongjo", Georgia, serif;
-  background: #efe6d4; color: #2b2117; -webkit-font-smoothing: antialiased;
-  padding-bottom: env(safe-area-inset-bottom);
+:root{
+  color-scheme: dark;
+  --bg:#14131a; --ink:#ece8f0; --accent:#c9a86a; --accent2:#b06a8a;
+  --panel:#1e1c26; --panel2:#262430; --border:#3a3648; --muted:#9a93a8;
+  --chipbg:#2a2738; --chipborder:#443f56;
 }
-.wrap { max-width: 720px; margin: 0 auto; padding: 14px; }
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body{
+  font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+  background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+  transition:background .4s ease,color .4s ease;
+}
+.wrap{ max-width:760px; margin:0 auto; padding:14px; }
 
-.title-bar { display:flex; align-items:center; justify-content:space-between; border-bottom: 2px solid #8a6d3b; padding-bottom: 10px; margin-bottom: 12px; gap:8px; }
-.title-bar h1 { font-size: 18px; letter-spacing: 2px; color:#5a3e1b; }
-.title-bar .sub { font-size: 11px; color:#8a6d3b; letter-spacing:1px; }
-.tbtns { display:flex; gap:6px; }
-.btn-ghost { background: transparent; border:1px solid #b9966a; color:#7a5a2e; border-radius:6px; padding:7px 10px; font-size:12px; cursor:pointer; font-family:inherit; }
-.btn-ghost:active { background:#e3d3b3; }
+.title-bar{ display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid var(--accent); padding-bottom:10px; margin-bottom:12px; gap:8px; }
+.title-bar h1{ font-size:18px; letter-spacing:2px; color:var(--accent); }
+.title-bar .sub{ font-size:11px; color:var(--muted); letter-spacing:1px; }
+.tbtns{ display:flex; gap:6px; }
+.btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:6px; padding:7px 10px; font-size:12px; cursor:pointer; font-family:inherit; }
+.btn-ghost:active{ background:var(--panel2); }
 
-.panel { background:#fbf5e6; border:1px solid #d8c39a; border-radius:10px; box-shadow: 0 2px 0 #d8c39a, 0 6px 18px rgba(120,90,40,.12); }
+.panel{ background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.25); }
 
-#statsPanel { padding:13px 15px; margin-bottom:12px; }
-.stats-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.char-name { font-size:16px; font-weight:700; color:#5a3e1b; }
-.char-meta { font-size:11px; color:#9a7a45; text-align:right; }
-.bars { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; }
-.bar-row { display:flex; flex-direction:column; gap:3px; }
-.bar-label { display:flex; justify-content:space-between; font-size:12px; color:#6b5230; }
-.bar-track { height:9px; background:#e6d6b4; border-radius:6px; overflow:hidden; }
-.bar-fill { height:100%; border-radius:6px; transition:width .5s ease; }
-.f-hp { background:linear-gradient(90deg,#b8453a,#e0735f); }
-.f-nei { background:linear-gradient(90deg,#3a6db8,#5fa6e0); }
-.f-mu  { background:linear-gradient(90deg,#7a4bb8,#a87fe0); }
-.f-charm { background:linear-gradient(90deg,#b83a86,#e06fb0); }
-.f-fame { background:linear-gradient(90deg,#b8923a,#e0c45f); }
-.f-aff { background:linear-gradient(90deg,#c43a5a,#f07f9a); }
-.aff-row { margin-top:10px; padding-top:10px; border-top:1px dashed #d8c39a; }
-.aff-name { font-weight:700; color:#a33a5a; }
-.inv { margin-top:10px; padding-top:10px; border-top:1px dashed #d8c39a; }
-.inv-title { font-size:12px; color:#8a6d3b; margin-bottom:6px; letter-spacing:1px; }
-.inv-items { display:flex; flex-wrap:wrap; gap:6px; }
-.chip { background:#f1e3c4; border:1px solid #cdae78; color:#6b5230; padding:3px 9px; border-radius:14px; font-size:12px; }
-.chip.empty { color:#b09a6e; border-style:dashed; }
+#statsPanel{ padding:13px 15px; margin-bottom:12px; }
+.stats-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.char-name{ font-size:16px; font-weight:700; color:var(--accent); }
+.char-meta{ font-size:11px; color:var(--muted); text-align:right; }
+.bars{ display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; }
+.bar-row{ display:flex; flex-direction:column; gap:3px; }
+.bar-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink); opacity:.85; }
+.bar-track{ height:9px; background:var(--panel2); border-radius:6px; overflow:hidden; }
+.bar-fill{ height:100%; border-radius:6px; transition:width .5s ease; }
+.aff-row{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.aff-name{ font-weight:700; color:var(--accent2); }
+.inv{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.inv-title{ font-size:12px; color:var(--muted); margin-bottom:6px; letter-spacing:1px; }
+.inv-items{ display:flex; flex-wrap:wrap; gap:6px; }
+.chip{ background:var(--chipbg); border:1px solid var(--chipborder); color:var(--ink); padding:3px 9px; border-radius:14px; font-size:12px; }
+.chip.empty{ color:var(--muted); border-style:dashed; }
 
-#storyPanel { padding:16px 18px; margin-bottom:12px; min-height:180px; }
-.story-scene { font-size:16px; line-height:1.9; white-space:pre-wrap; }
-.story-scene .you { color:#7a5a2e; font-style:italic; display:block; margin:14px 0 4px; padding-left:10px; border-left:3px solid #c9a86a; }
-.toast { font-size:12px; color:#9a5a2e; margin-top:10px; }
-.toast span { display:inline-block; background:#f3e2c2; border:1px solid #d8b87a; border-radius:12px; padding:2px 8px; margin:2px 4px 2px 0; }
+#storyPanel{ padding:16px 18px; margin-bottom:12px; min-height:180px; }
+.story-scene{ font-size:16px; line-height:1.9; white-space:pre-wrap; }
+.story-scene .you{ color:var(--accent); font-style:italic; display:block; margin:14px 0 4px; padding-left:10px; border-left:3px solid var(--accent); }
+.toast{ font-size:12px; color:var(--accent2); margin-top:10px; }
+.toast span{ display:inline-block; background:var(--chipbg); border:1px solid var(--chipborder); border-radius:12px; padding:2px 8px; margin:2px 4px 2px 0; }
 
-#actionPanel { padding:13px 15px; }
-.choices { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
-.choice { text-align:left; background:#f7eed6; border:1px solid #d2b886; color:#4a3a20; padding:13px 14px; border-radius:8px; cursor:pointer; font-size:15px; font-family:inherit; transition:.12s; }
-.choice:active { background:#efe0bf; }
-.choice:disabled { opacity:.5; }
-.input-row { display:flex; gap:8px; }
-.input-row input { flex:1; padding:13px 14px; border:1px solid #d2b886; border-radius:8px; background:#fffdf6; font-size:15px; font-family:inherit; color:#2b2117; }
-.input-row input:focus { outline:none; border-color:#a87f3a; }
-.btn-send { background:#7a5a2e; color:#fbf5e6; border:none; border-radius:8px; padding:0 18px; font-size:15px; cursor:pointer; font-family:inherit; }
-.btn-send:active { background:#5a3e1b; }
-.btn-send:disabled { opacity:.5; }
+#actionPanel{ padding:13px 15px; }
+.choices{ display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+.choice{ text-align:left; background:var(--panel2); border:1px solid var(--border); color:var(--ink); padding:13px 14px; border-radius:8px; cursor:pointer; font-size:15px; font-family:inherit; transition:.12s; }
+.choice:active{ background:var(--chipbg); }
+.choice:disabled{ opacity:.5; }
+.input-row{ display:flex; gap:8px; }
+.input-row input{ flex:1; padding:13px 14px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); font-size:15px; font-family:inherit; color:var(--ink); }
+.input-row input:focus{ outline:none; border-color:var(--accent); }
+.btn-send{ background:var(--accent); color:var(--bg); border:none; border-radius:8px; padding:0 18px; font-size:15px; cursor:pointer; font-family:inherit; font-weight:700; }
+.btn-send:active{ opacity:.85; }
+.btn-send:disabled{ opacity:.5; }
 
-#setup, #config { padding:24px 20px; text-align:center; }
-#setup h2, #config h2 { font-size:24px; color:#5a3e1b; letter-spacing:4px; margin-bottom:6px; }
-#setup .tag, #config .tag { color:#9a7a45; font-size:13px; margin-bottom:20px; }
-.field { text-align:left; max-width:460px; margin:0 auto 16px; }
-.field label { display:block; font-size:13px; color:#6b5230; margin-bottom:6px; letter-spacing:1px; }
-.field input, .field select { width:100%; padding:12px 14px; border:1px solid #d2b886; border-radius:8px; background:#fffdf6; font-size:15px; font-family:inherit; color:#2b2117; }
-.field .hint { font-size:11px; color:#a08a5a; margin-top:6px; line-height:1.5; }
-.field .hint a { color:#7a5a2e; }
-.opt-row { display:flex; gap:8px; flex-wrap:wrap; }
-.opt { flex:1; min-width:120px; background:#f7eed6; border:1px solid #d2b886; color:#5a3e1b; padding:10px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; transition:.12s; }
-.opt.sel { background:#7a5a2e; color:#fbf5e6; border-color:#5a3e1b; }
-.opt small { display:block; color:#9a7a45; font-size:11px; margin-top:3px; }
-.opt.sel small { color:#e6d3a8; }
-.btn-start { margin-top:10px; background:#8a3a3a; color:#fbf5e6; border:none; border-radius:10px; padding:14px 40px; font-size:16px; letter-spacing:3px; cursor:pointer; font-family:inherit; }
-.btn-start:active { background:#6a2a2a; }
-.btn-start:disabled { opacity:.5; }
+#setup, #config, #select{ padding:24px 20px; }
+#setup, #config{ text-align:center; }
+#setup h2, #config h2{ font-size:24px; color:var(--accent); letter-spacing:4px; margin-bottom:6px; }
+#setup .tag, #config .tag, #select .tag{ color:var(--muted); font-size:13px; margin-bottom:20px; }
+.brand{ text-align:center; margin-bottom:18px; }
+.brand h2{ font-size:26px; color:var(--accent); letter-spacing:6px; }
+.brand .tag{ margin-bottom:0; }
+.field{ text-align:left; max-width:480px; margin:0 auto 16px; }
+.field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; letter-spacing:1px; }
+.field input, .field select{ width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); font-size:15px; font-family:inherit; color:var(--ink); }
+.field .hint{ font-size:11px; color:var(--muted); margin-top:6px; line-height:1.5; }
+.field .hint a{ color:var(--accent); }
+.opt-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.opt{ flex:1; min-width:120px; background:var(--panel2); border:1px solid var(--border); color:var(--ink); padding:10px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; transition:.12s; text-align:left; }
+.opt.sel{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+.opt small{ display:block; color:var(--muted); font-size:11px; margin-top:3px; }
+.opt.sel small{ color:var(--bg); opacity:.8; }
+.btn-start{ margin-top:10px; background:var(--accent2); color:#fff; border:none; border-radius:10px; padding:14px 40px; font-size:16px; letter-spacing:3px; cursor:pointer; font-family:inherit; }
+.btn-start:active{ opacity:.85; }
+.btn-start:disabled{ opacity:.5; }
 
-.loading { display:flex; align-items:center; gap:10px; color:#8a6d3b; font-size:14px; padding:6px 2px; }
-.dot { width:8px; height:8px; border-radius:50%; background:#a87f3a; animation:bounce 1s infinite; }
-.dot:nth-child(2){animation-delay:.15s} .dot:nth-child(3){animation-delay:.3s}
-@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.5} 40%{transform:translateY(-6px);opacity:1} }
-.hidden { display:none !important; }
-.err { color:#a33; font-size:13px; padding:8px 2px; line-height:1.5; }
-@media (max-width:540px){ .bars{grid-template-columns:1fr;} }
+/* world gallery */
+.worlds{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.world-card{ position:relative; text-align:left; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px; cursor:pointer; transition:.15s; overflow:hidden; }
+.world-card:hover{ transform:translateY(-2px); border-color:var(--accent); }
+.world-card:active{ transform:translateY(0); }
+.world-card .emoji{ font-size:30px; line-height:1; }
+.world-card .wc-name{ font-size:17px; font-weight:700; color:var(--accent); margin-top:8px; letter-spacing:1px; }
+.world-card .wc-genre{ display:inline-block; font-size:10px; color:var(--bg); background:var(--accent2); padding:2px 8px; border-radius:10px; margin-top:6px; letter-spacing:1px; }
+.world-card .wc-tag{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:8px; }
+.continue-card{ grid-column:1/-1; background:var(--panel2); border:1px solid var(--accent); }
+.continue-card .wc-name{ color:var(--accent); }
+.continue-actions{ display:flex; gap:8px; margin-top:10px; }
+
+.loading{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px; padding:6px 2px; }
+.dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); animation:bounce 1s infinite; }
+.dot:nth-child(2){ animation-delay:.15s; } .dot:nth-child(3){ animation-delay:.3s; }
+@keyframes bounce{ 0%,80%,100%{transform:translateY(0);opacity:.5} 40%{transform:translateY(-6px);opacity:1} }
+.hidden{ display:none !important; }
+.err{ color:#e07070; font-size:13px; padding:8px 2px; line-height:1.5; }
+@media (max-width:540px){ .bars{grid-template-columns:1fr;} .worlds{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -98,14 +115,14 @@ body {
 
   <!-- CONFIG: API 키 설정 -->
   <div id="config" class="panel">
-    <h2>江湖風雲錄</h2>
+    <h2>이야기관</h2>
     <div class="tag">먼저 한 번만 — AI 연결을 설정해 주세요</div>
 
     <div class="field">
       <label>Gemini API 키</label>
       <input id="cfgKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AIza... 형태의 키를 붙여넣으세요">
       <div class="hint">
-        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료로 발급할 수 있어요(로그인 후 'Create API key'). 키는 이 기기의 브라우저에만 저장되고 외부로 전송되지 않아요(게임 진행 시 Google 서버에만 직접 전달).
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료로 발급할 수 있어요(로그인 후 'Create API key'). 키는 이 기기의 브라우저에만 저장되며, 게임 진행 시 Google 서버로만 직접 전달됩니다.
       </div>
     </div>
 
@@ -118,30 +135,31 @@ body {
         <option value="__custom__">직접 입력…</option>
       </select>
       <input id="cfgModelCustom" class="hidden" type="text" style="margin-top:8px;" placeholder="모델 이름 직접 입력 (예: gemini-3-flash)">
-      <div class="hint">무료로 충분히 즐기려면 Flash를 추천해요. Pro는 더 풍부하지만 무료 한도가 빡빡하고, 가진 Gemini 구독과 별개로 API 결제가 필요할 수 있어요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.</div>
+      <div class="hint">무료로 즐기려면 Flash를 추천해요. 모델 이름이 바뀌어 오류가 나면 '직접 입력'으로 바꿔 보세요.</div>
     </div>
 
     <button id="btnSaveCfg" class="btn-start">저 장</button>
     <div id="cfgErr" class="err hidden"></div>
   </div>
 
+  <!-- WORLD SELECT -->
+  <div id="select" class="panel hidden">
+    <div class="brand">
+      <h2>이야기관</h2>
+      <div class="tag">AI가 매번 새로 써내려가는, 당신이 주인공인 웹소설</div>
+    </div>
+    <div class="worlds" id="worldGrid"></div>
+    <div style="text-align:center;margin-top:18px;"><button id="btnEditCfg" class="btn-ghost">AI 연결 설정 변경</button></div>
+  </div>
+
   <!-- SETUP -->
   <div id="setup" class="panel hidden">
-    <h2>江湖風雲錄</h2>
-    <div class="tag">강호풍운록 · AI가 매번 새로 써내려가는 무협 로맨스</div>
-
-    <div id="continueBox" class="panel hidden" style="padding:14px 16px;margin:0 auto 20px;max-width:460px;background:#f3e7c9;text-align:left;">
-      <div style="font-size:13px;color:#6b5230;margin-bottom:8px;">진행 중인 이야기가 있습니다.</div>
-      <div id="continueMeta" style="font-size:12px;color:#9a7a45;margin-bottom:10px;"></div>
-      <div style="display:flex;gap:8px;">
-        <button id="btnContinue" class="btn-send" style="padding:10px 16px;">이어하기</button>
-        <button id="btnNew" class="btn-ghost">새로 시작</button>
-      </div>
-    </div>
+    <h2 id="setupTitle">—</h2>
+    <div class="tag" id="setupTag">—</div>
 
     <div class="field">
-      <label>당신의 이름 (협명)</label>
-      <input id="inName" placeholder="예: 백리서, 모용연, 진하랑" maxlength="12">
+      <label>당신의 이름</label>
+      <input id="inName" placeholder="주인공의 이름을 지어 주세요" maxlength="14">
     </div>
     <div class="field">
       <label>성별</label>
@@ -153,14 +171,10 @@ body {
     </div>
     <div class="field">
       <label>출신 — 시작 배경을 고르세요</label>
-      <div class="opt-row" id="originOpts">
-        <button class="opt sel" data-o="명문정파">명문정파 제자<small>내공·명성 우위</small></button>
-        <button class="opt" data-o="낭인검객">떠돌이 낭인<small>무공·매력 우위</small></button>
-        <button class="opt" data-o="몰락세가">몰락세가 후예<small>균형형, 복수의 길</small></button>
-      </div>
+      <div class="opt-row" id="originOpts"></div>
     </div>
-    <button id="btnStart" class="btn-start">입 도 (入道)</button>
-    <div style="margin-top:14px;"><button id="btnEditCfg" class="btn-ghost">AI 연결 설정 변경</button></div>
+    <button id="btnStart" class="btn-start">이야기 시작</button>
+    <div style="margin-top:14px;"><button id="btnBackSelect" class="btn-ghost">← 다른 이야기 고르기</button></div>
     <div id="setupErr" class="err hidden"></div>
   </div>
 
@@ -168,8 +182,8 @@ body {
   <div id="game" class="hidden">
     <div class="title-bar">
       <div>
-        <h1>江湖風雲錄</h1>
-        <div class="sub">강호풍운록 · 제 <span id="turnNo">1</span> 막</div>
+        <h1 id="gameTitle">—</h1>
+        <div class="sub">제 <span id="turnNo">1</span> 막</div>
       </div>
       <div class="tbtns">
         <button id="btnCfg2" class="btn-ghost">⚙</button>
@@ -182,17 +196,10 @@ body {
         <div class="char-name" id="dispName">—</div>
         <div class="char-meta" id="dispMeta">—</div>
       </div>
-      <div class="bars">
-        <div class="bar-row"><div class="bar-label"><span>체력</span><span id="vHp">100</span></div><div class="bar-track"><div class="bar-fill f-hp" id="bHp" style="width:100%"></div></div></div>
-        <div class="bar-row"><div class="bar-label"><span>내공</span><span id="vNei">30</span></div><div class="bar-track"><div class="bar-fill f-nei" id="bNei" style="width:30%"></div></div></div>
-        <div class="bar-row"><div class="bar-label"><span>무공</span><span id="vMu">30</span></div><div class="bar-track"><div class="bar-fill f-mu" id="bMu" style="width:30%"></div></div></div>
-        <div class="bar-row"><div class="bar-label"><span>매력</span><span id="vCharm">30</span></div><div class="bar-track"><div class="bar-fill f-charm" id="bCharm" style="width:30%"></div></div></div>
-        <div class="bar-row"><div class="bar-label"><span>명성</span><span id="vFame">10</span></div><div class="bar-track"><div class="bar-fill f-fame" id="bFame" style="width:10%"></div></div></div>
-        <div class="bar-row"><div class="bar-label"><span>은전(兩)</span><span id="vGold">10</span></div><div class="bar-track"><div class="bar-fill f-fame" id="bGold" style="width:10%"></div></div></div>
-      </div>
+      <div class="bars" id="bars"></div>
       <div class="aff-row hidden" id="affRow">
-        <div class="bar-label"><span>연심 · <span class="aff-name" id="affName"></span></span><span id="vAff">0</span></div>
-        <div class="bar-track"><div class="bar-fill f-aff" id="bAff" style="width:0%"></div></div>
+        <div class="bar-label"><span><span id="affLabel">연심</span> · <span class="aff-name" id="affName"></span></span><span id="vAff">0</span></div>
+        <div class="bar-track"><div class="bar-fill" id="bAff" style="width:0%;background:linear-gradient(90deg,#c43a5a,#f07f9a)"></div></div>
       </div>
       <div class="inv">
         <div class="inv-title">소지품</div>
@@ -206,10 +213,10 @@ body {
     </div>
 
     <div id="actionPanel" class="panel">
-      <div id="loading" class="loading hidden"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>천기를 읽는 중…</span></div>
+      <div id="loading" class="loading hidden"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>이야기를 엮는 중…</span></div>
       <div class="choices" id="choices"></div>
       <div class="input-row">
-        <input id="freeInput" placeholder="직접 행동을 입력… 예: 객잔 주인에게 소문을 묻는다" maxlength="200">
+        <input id="freeInput" placeholder="직접 행동을 입력…" maxlength="200">
         <button id="btnSend" class="btn-send">행동</button>
       </div>
       <div id="gameErr" class="err hidden"></div>
@@ -222,16 +229,111 @@ body {
 (function(){
   "use strict";
 
-  var SAVE_KEY = "ganghorpg_save_v1";
-  var CFG_KEY  = "ganghorpg_cfg_v1";
+  var SAVE_KEY = "storyhall_save_v1";
+  var CFG_KEY  = "storyhall_cfg_v1";
   var TARGET_TURNS = 48;
 
   var CFG = { key:"", model:"gemini-2.5-flash" };
 
+  // ---------- color palette for stat bars ----------
+  var C = {
+    red:["#b8453a","#e0735f"], blue:["#3a6db8","#5fa6e0"], purple:["#7a4bb8","#a87fe0"],
+    pink:["#b83a86","#e06fb0"], gold:["#b8923a","#e0c45f"], green:["#3a9a5a","#6fd08a"],
+    teal:["#2a9aa0","#5fd0d0"], orange:["#c47a2a","#e0a55f"], slate:["#5a6a8a","#8aa0c0"]
+  };
+  function st(key,label,init,color,isHp){ var c=C[color]||C.slate; return {key:key,label:label,init:init,c1:c[0],c2:c[1],hp:!!isHp}; }
+
+  // ---------- WORLDS ----------
+  var DEFAULT_THEME = { scheme:"dark", bg:"#14131a", ink:"#ece8f0", accent:"#c9a86a", accent2:"#b06a8a", panel:"#1e1c26", panel2:"#262430", border:"#3a3648", muted:"#9a93a8", chipbg:"#2a2738", chipborder:"#443f56" };
+
+  var WORLDS = [
+    {
+      id:"murim", emoji:"⚔️", name:"강호풍운록", genre:"무협 로맨스",
+      tagline:"검과 내공, 문파의 은원과 강호의 사랑. 한 자루 검에 운명을 건다.",
+      genre_desc:"강호(江湖)를 배경으로 검과 내공·문파·은원·로맨스가 얽힌 동양 무협 세계입니다.",
+      affLabel:"연심", romance:true,
+      theme:{ scheme:"light", bg:"#efe6d4", ink:"#2b2117", accent:"#7a5a2e", accent2:"#8a3a3a", panel:"#fbf5e6", panel2:"#f7eed6", border:"#d8c39a", muted:"#9a7a45", chipbg:"#f1e3c4", chipborder:"#cdae78" },
+      stats:[ st("hp","체력",100,"red",true), st("nei","내공",30,"blue"), st("mu","무공",30,"purple"), st("charm","매력",30,"pink"), st("fame","명성",10,"gold"), st("gold","은전(兩)",10,"orange") ],
+      origins:[
+        {key:"명문정파", label:"명문정파 제자", desc:"내공·명성 우위", mods:{nei:15,fame:15,gold:5}},
+        {key:"낭인검객", label:"떠돌이 낭인", desc:"무공·매력 우위", mods:{mu:15,charm:10,nei:-5,gold:-4}},
+        {key:"몰락세가", label:"몰락세가 후예", desc:"균형형, 복수의 길", mods:{mu:5,charm:2,fame:2,gold:10}}
+      ]
+    },
+    {
+      id:"arcana", emoji:"🪄", name:"아르카나 마법학교", genre:"판타지 학원",
+      tagline:"고대의 마법 학교, 금지된 비밀과 동급생과의 설렘. 당신의 마력이 깨어난다.",
+      genre_desc:"고대의 마법 학교 '아르카나'를 무대로, 마법 수업·기숙사·금지구역의 비밀과 학우들과의 관계가 얽힌 판타지 학원 세계입니다.",
+      affLabel:"호감", romance:true,
+      theme:{ scheme:"dark", bg:"#1b1630", ink:"#ece6ff", accent:"#a98fe6", accent2:"#d06fb0", panel:"#261d44", panel2:"#2f2552", border:"#463a72", muted:"#a99cd6", chipbg:"#322a55", chipborder:"#564a86" },
+      stats:[ st("hp","체력",100,"red",true), st("mana","마력",30,"purple"), st("lore","지식",30,"blue"), st("charm","매력",30,"pink"), st("rep","평판",10,"gold"), st("gold","골드",10,"orange") ],
+      origins:[
+        {key:"명문마법가문", label:"명문 마법가문", desc:"마력·평판 우위", mods:{mana:18,rep:12}},
+        {key:"평민장학생", label:"평민 장학생", desc:"지식·매력 우위", mods:{lore:15,charm:12,gold:-4}},
+        {key:"이계전입생", label:"이계의 전입생", desc:"미지의 잠재력", mods:{mana:8,charm:6,lore:6,rep:-4}}
+      ]
+    },
+    {
+      id:"dawn", emoji:"🧟", name:"폐허의 새벽", genre:"좀비 아포칼립스",
+      tagline:"감염이 휩쓴 도시. 살아남고, 사람을 믿고, 끝내 새벽을 본다.",
+      genre_desc:"감염 사태로 무너진 현대 도시를 배경으로, 보급품 확보·은신처 방어·동료와의 신뢰가 생존을 가르는 좀비 아포칼립스 세계입니다.",
+      affLabel:"유대", romance:true,
+      theme:{ scheme:"dark", bg:"#16181a", ink:"#d8dde0", accent:"#9aa86a", accent2:"#b8453a", panel:"#1f2326", panel2:"#272c30", border:"#3a4248", muted:"#8a9298", chipbg:"#2a3035", chipborder:"#44505a" },
+      stats:[ st("hp","체력",100,"red",true), st("mind","정신력",40,"teal"), st("combat","전투력",25,"orange"), st("survival","생존술",25,"green"), st("trust","신뢰",10,"gold"), st("supply","보급품",15,"slate") ],
+      origins:[
+        {key:"전직군인", label:"전직 군인", desc:"전투·체력 우위", mods:{combat:20,survival:5}},
+        {key:"응급구조사", label:"응급구조사", desc:"생존·정신 우위", mods:{survival:18,mind:10,combat:-5}},
+        {key:"평범한시민", label:"평범한 시민", desc:"보급·신뢰 우위", mods:{supply:12,trust:8,combat:-3}}
+      ]
+    },
+    {
+      id:"orion", emoji:"🚀", name:"오리온의 표류자", genre:"SF 스페이스 오페라",
+      tagline:"낡은 화물선과 끝없는 성간 항로. 음모와 외계 문명 사이를 항해한다.",
+      genre_desc:"성간 무역과 거대 기업·외계 문명이 얽힌 먼 미래의 우주를 배경으로, 함선 운용·해킹·교섭이 생사를 가르는 스페이스 오페라 세계입니다.",
+      affLabel:"교감", romance:true,
+      theme:{ scheme:"dark", bg:"#0c1422", ink:"#d6e8ff", accent:"#5ab0e0", accent2:"#9a7fe0", panel:"#122236", panel2:"#16293f", border:"#2a4866", muted:"#7fa0c0", chipbg:"#163048", chipborder:"#2c5478" },
+      stats:[ st("hp","체력",100,"red",true), st("energy","기력",35,"teal"), st("tech","공학",30,"blue"), st("hack","해킹",25,"purple"), st("rep","평판",10,"gold"), st("credit","크레딧",15,"orange") ],
+      origins:[
+        {key:"함대사관", label:"전직 함대 사관", desc:"공학·평판 우위", mods:{tech:18,rep:12}},
+        {key:"밀수꾼", label:"변경의 밀수꾼", desc:"해킹·크레딧 우위", mods:{hack:18,credit:12,rep:-6}},
+        {key:"동기화자", label:"AI 동기화자", desc:"해킹·기력 우위", mods:{hack:12,energy:12,tech:4}}
+      ]
+    },
+    {
+      id:"chaebol", emoji:"🥂", name:"제국호텔의 비밀", genre:"현대 로맨스 드라마",
+      tagline:"재벌가의 화려한 음모와 위험한 사랑. 한 번의 선택이 운명을 뒤바꾼다.",
+      genre_desc:"거대 재벌가와 특급 호텔을 무대로, 후계 다툼·기업 음모·금지된 사랑이 얽힌 현대 로맨스 드라마 세계입니다.",
+      affLabel:"애정", romance:true,
+      theme:{ scheme:"light", bg:"#f4f1ec", ink:"#232020", accent:"#9a7338", accent2:"#a3324a", panel:"#ffffff", panel2:"#faf7f1", border:"#e0d8cc", muted:"#9a8f7e", chipbg:"#f3ece0", chipborder:"#d8cab0" },
+      stats:[ st("hp","컨디션",100,"red",true), st("mental","멘탈",40,"purple"), st("talk","화술",30,"teal"), st("charm","매력",30,"pink"), st("network","인맥",15,"gold"), st("asset","자산",15,"orange") ],
+      origins:[
+        {key:"비서실인턴", label:"비서실 인턴", desc:"화술·멘탈 우위", mods:{talk:15,mental:10,asset:-4}},
+        {key:"숨겨진후계자", label:"숨겨진 후계자", desc:"자산·인맥 우위", mods:{asset:18,network:12}},
+        {key:"라이벌가스파이", label:"라이벌가의 스파이", desc:"매력·화술 우위", mods:{charm:14,talk:8,network:-4}}
+      ]
+    },
+    {
+      id:"mist", emoji:"🕯️", name:"안개의 저택", genre:"미스터리 추리",
+      tagline:"외딴 저택에서 벌어진 사건. 단서를 모으고, 의심하고, 진실에 다가선다.",
+      genre_desc:"안개에 잠긴 외딴 저택에서 벌어지는 의문의 사건을 무대로, 관찰과 추리·증언 수집으로 진실을 밝혀가는 고전 미스터리 세계입니다.",
+      affLabel:"신뢰", romance:true,
+      theme:{ scheme:"dark", bg:"#14151c", ink:"#d8d6e0", accent:"#8a96bc", accent2:"#b07a52", panel:"#1c1e28", panel2:"#232633", border:"#393d50", muted:"#8e90a4", chipbg:"#282b3a", chipborder:"#444a60" },
+      stats:[ st("hp","체력",100,"red",true), st("nerve","담력",35,"orange"), st("observe","관찰력",30,"blue"), st("deduce","추리력",30,"purple"), st("trust","신뢰",15,"gold"), st("fund","자금",15,"green") ],
+      origins:[
+        {key:"사립탐정", label:"사립탐정", desc:"관찰·추리 우위", mods:{observe:15,deduce:12}},
+        {key:"신문기자", label:"신문기자", desc:"담력·신뢰 우위", mods:{nerve:14,trust:10,fund:-4}},
+        {key:"유산상속인", label:"유산 상속인", desc:"자금·담력 우위", mods:{fund:16,nerve:8,observe:-2}}
+      ]
+    }
+  ];
+
+  function findWorld(id){ for(var i=0;i<WORLDS.length;i++){ if(WORLDS[i].id===id) return WORLDS[i]; } return WORLDS[0]; }
+
+  var WORLD = WORLDS[0];
+
   var S = {
-    name:"", gender:"남", origin:"명문정파",
-    hp:100, hpMax:100, nei:30, mu:30, charm:30, fame:10, gold:10,
-    affName:"", aff:0, inv:[], turn:1,
+    world:"", name:"", gender:"남", origin:"",
+    stats:{}, affName:"", aff:0, inv:[], turn:1,
     phase:"발단", ended:false,
     memory:"", lastScene:"", lastChoices:[], history:[]
   };
@@ -240,16 +342,26 @@ body {
   function show(el){ el.classList.remove("hidden"); }
   function hide(el){ el.classList.add("hidden"); }
 
-  // ---------- config persistence ----------
+  // ---------- theme ----------
+  function applyTheme(t){
+    var r=document.documentElement.style;
+    r.setProperty("--bg",t.bg); r.setProperty("--ink",t.ink);
+    r.setProperty("--accent",t.accent); r.setProperty("--accent2",t.accent2);
+    r.setProperty("--panel",t.panel); r.setProperty("--panel2",t.panel2);
+    r.setProperty("--border",t.border); r.setProperty("--muted",t.muted);
+    r.setProperty("--chipbg",t.chipbg); r.setProperty("--chipborder",t.chipborder);
+    document.documentElement.style.colorScheme=t.scheme;
+    var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",t.bg);
+  }
+
+  // ---------- persistence ----------
   function loadCfg(){ try{ var r=localStorage.getItem(CFG_KEY); if(r){ var o=JSON.parse(r); CFG.key=o.key||""; CFG.model=o.model||"gemini-2.5-flash"; } }catch(e){} }
   function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){} }
 
-  // ---------- game persistence ----------
   function saveGame(){
     try{ localStorage.setItem(SAVE_KEY, JSON.stringify({
-      name:S.name, gender:S.gender, origin:S.origin,
-      hp:S.hp, nei:S.nei, mu:S.mu, charm:S.charm, fame:S.fame, gold:S.gold,
-      affName:S.affName, aff:S.aff, inv:S.inv, turn:S.turn,
+      world:S.world, name:S.name, gender:S.gender, origin:S.origin,
+      stats:S.stats, affName:S.affName, aff:S.aff, inv:S.inv, turn:S.turn,
       phase:S.phase, ended:S.ended,
       memory:S.memory, lastScene:S.lastScene, lastChoices:S.lastChoices,
       history:S.history.slice(-6)
@@ -262,13 +374,13 @@ body {
   $("cfgModel").addEventListener("change", function(){
     $("cfgModelCustom").classList.toggle("hidden", this.value!=="__custom__");
   });
-  function openConfig(fromGame){
+  function openConfig(){
     $("cfgKey").value = CFG.key;
     var sel=$("cfgModel"); var found=false;
     for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===CFG.model){ sel.value=CFG.model; found=true; break; } }
     if(!found && CFG.model){ sel.value="__custom__"; $("cfgModelCustom").classList.remove("hidden"); $("cfgModelCustom").value=CFG.model; }
-    hide($("setup")); hide($("game")); show($("config"));
-    $("btnSaveCfg").dataset.from = fromGame? "game":"setup";
+    hide($("setup")); hide($("game")); hide($("select")); show($("config"));
+    applyTheme(DEFAULT_THEME);
   }
   $("btnSaveCfg").addEventListener("click", function(){
     var k=$("cfgKey").value.trim();
@@ -277,11 +389,44 @@ body {
     if(m==="__custom__"){ m=$("cfgModelCustom").value.trim()||"gemini-2.5-flash"; }
     CFG.key=k; CFG.model=m; saveCfg(); hide($("cfgErr"));
     hide($("config"));
-    enterSetup();
+    enterSelect();
   });
+  $("btnEditCfg").addEventListener("click", openConfig);
+  $("btnCfg2").addEventListener("click", openConfig);
 
-  // ---------- setup screen ----------
-  var gender="남", origin="명문정파";
+  // ---------- world select ----------
+  function enterSelect(){
+    applyTheme(DEFAULT_THEME);
+    hide($("config")); hide($("setup")); hide($("game")); show($("select"));
+    var grid=$("worldGrid"); grid.innerHTML="";
+
+    var sv=loadSave();
+    if(sv && sv.name){
+      var w=findWorld(sv.world);
+      var cc=document.createElement("div"); cc.className="world-card continue-card";
+      cc.innerHTML='<div class="emoji">'+w.emoji+'</div>'+
+        '<div class="wc-name">이어하기 · '+escapeHtml(sv.name)+'</div>'+
+        '<div class="wc-tag">'+escapeHtml(w.name)+' · '+escapeHtml(sv.origin||"")+' · '+(sv.ended?"완결":(sv.phase||"진행")+" "+(sv.turn||1)+"/"+TARGET_TURNS)+'</div>'+
+        '<div class="continue-actions"><button class="btn-send" id="btnContinue" style="padding:9px 16px;">이어하기</button><button class="btn-ghost" id="btnDiscard">삭제</button></div>';
+      grid.appendChild(cc);
+      $("btnContinue").addEventListener("click", function(ev){ ev.stopPropagation(); var s=loadSave(); if(s) resumeGame(s); });
+      $("btnDiscard").addEventListener("click", function(ev){ ev.stopPropagation(); if(confirm("저장된 이야기를 삭제할까요?")){ clearSave(); enterSelect(); } });
+    }
+
+    WORLDS.forEach(function(w){
+      var card=document.createElement("div"); card.className="world-card";
+      card.innerHTML='<div class="emoji">'+w.emoji+'</div>'+
+        '<div class="wc-name">'+escapeHtml(w.name)+'</div>'+
+        '<div class="wc-genre">'+escapeHtml(w.genre)+'</div>'+
+        '<div class="wc-tag">'+escapeHtml(w.tagline)+'</div>';
+      card.addEventListener("click", function(){ chooseWorld(w.id); });
+      grid.appendChild(card);
+    });
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  // ---------- setup ----------
+  var gender="남", origin="";
   function bindOpts(containerId, attr, cb){
     var c=$(containerId);
     c.querySelectorAll(".opt").forEach(function(b){
@@ -292,58 +437,72 @@ body {
     });
   }
   bindOpts("genderOpts","data-g",function(v){gender=v;});
-  bindOpts("originOpts","data-o",function(v){origin=v;});
 
-  function enterSetup(){
-    show($("setup"));
-    var sv=loadSave();
-    if(sv && sv.name){
-      show($("continueBox"));
-      $("continueMeta").textContent = sv.name+" · "+sv.origin+" · "+(sv.ended?"완결":(sv.phase||"진행")+" "+(sv.turn||1)+"/"+TARGET_TURNS);
-    } else { hide($("continueBox")); }
+  function chooseWorld(id){
+    WORLD=findWorld(id); applyTheme(WORLD.theme);
+    hide($("select")); hide($("config")); hide($("game")); show($("setup"));
+    $("setupTitle").textContent=WORLD.name;
+    $("setupTag").textContent=WORLD.genre+" · "+WORLD.tagline;
+    $("inName").value=""; gender="남";
+    $("genderOpts").querySelectorAll(".opt").forEach(function(x){ x.classList.toggle("sel", x.getAttribute("data-g")==="남"); });
+    // build origins
+    var oc=$("originOpts"); oc.innerHTML="";
+    WORLD.origins.forEach(function(o,idx){
+      var b=document.createElement("button"); b.className="opt"+(idx===0?" sel":""); b.setAttribute("data-o",o.key);
+      b.innerHTML=escapeHtml(o.label)+"<small>"+escapeHtml(o.desc)+"</small>";
+      oc.appendChild(b);
+    });
+    origin=WORLD.origins[0].key;
+    bindOpts("originOpts","data-o",function(v){origin=v;});
+    hide($("setupErr"));
   }
 
-  $("btnEditCfg").addEventListener("click", function(){ openConfig(false); });
-  $("btnCfg2").addEventListener("click", function(){ openConfig(true); });
-
-  $("btnContinue").addEventListener("click", function(){ var sv=loadSave(); if(sv) resumeGame(sv); });
-  $("btnNew").addEventListener("click", function(){
-    if(confirm("새로 시작하면 저장된 이야기가 삭제됩니다. 계속할까요?")){ clearSave(); hide($("continueBox")); }
-  });
+  $("btnBackSelect").addEventListener("click", enterSelect);
 
   $("btnStart").addEventListener("click", function(){
     var nm=$("inName").value.trim();
-    if(!nm){ var e=$("setupErr"); e.textContent="협명을 입력해 주세요."; show(e); return; }
-    S.name=nm; S.gender=gender; S.origin=origin;
-    var p=originPreset(origin);
-    S.nei=p.nei; S.mu=p.mu; S.charm=p.charm; S.fame=p.fame; S.gold=p.gold;
+    if(!nm){ var e=$("setupErr"); e.textContent="이름을 입력해 주세요."; show(e); return; }
+    S.world=WORLD.id; S.name=nm; S.gender=gender; S.origin=origin;
+    S.stats={}; var o=originMods(origin);
+    WORLD.stats.forEach(function(s){ S.stats[s.key]=clamp(s.init+(o[s.key]||0)); });
+    S.affName=""; S.aff=0; S.inv=[]; S.turn=1; S.phase="발단"; S.ended=false;
+    S.memory=""; S.lastScene=""; S.lastChoices=[]; S.history=[];
     hide($("setup")); show($("game"));
+    initGameChrome();
     renderStats(); startStory();
   });
   $("btnReset").addEventListener("click", function(){
     if(confirm("정말 처음부터 다시 시작할까요? 저장된 이야기가 삭제됩니다.")){ clearSave(); location.reload(); }
   });
+  function originMods(key){ for(var i=0;i<WORLD.origins.length;i++){ if(WORLD.origins[i].key===key) return WORLD.origins[i].mods||{}; } return {}; }
 
-  function originPreset(o){
-    if(o==="명문정파") return {nei:45, mu:30, charm:25, fame:25, gold:15};
-    if(o==="낭인검객") return {nei:25, mu:45, charm:40, fame:8,  gold:6};
-    return {nei:32, mu:35, charm:32, fame:12, gold:20};
+  function initGameChrome(){
+    $("gameTitle").textContent=WORLD.name;
+    $("affLabel").textContent=WORLD.affLabel||"연심";
+    $("freeInput").placeholder="직접 행동을 입력… 예: 주변을 살핀다";
+    $("freeInput").disabled=false; $("btnSend").disabled=false;
   }
 
   // ---------- rendering ----------
   function clamp(n){ n=Math.round(n); return n<0?0:(n>100?100:n); }
-  function setBar(barId, valId, v){ $(barId).style.width=clamp(v)+"%"; $(valId).textContent=clamp(v); }
   function renderStats(){
     $("dispName").textContent=S.name;
-    $("dispMeta").textContent=S.origin+" · "+S.gender+" · "+(S.ended?"완결":(S.phase+" "+S.turn+"/"+TARGET_TURNS));
+    $("dispMeta").textContent=findOriginLabel(S.origin)+" · "+S.gender+" · "+(S.ended?"완결":(S.phase+" "+S.turn+"/"+TARGET_TURNS));
     $("turnNo").textContent=S.turn;
-    setBar("bHp","vHp",S.hp); setBar("bNei","vNei",S.nei); setBar("bMu","vMu",S.mu);
-    setBar("bCharm","vCharm",S.charm); setBar("bFame","vFame",S.fame); setBar("bGold","vGold",S.gold);
-    if(S.affName){ show($("affRow")); $("affName").textContent=S.affName; setBar("bAff","vAff",S.aff); }
+    var html=WORLD.stats.map(function(s){
+      var v=clamp(S.stats[s.key]!=null?S.stats[s.key]:s.init);
+      return '<div class="bar-row"><div class="bar-label"><span>'+escapeHtml(s.label)+'</span><span>'+v+'</span></div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+v+'%;background:linear-gradient(90deg,'+s.c1+','+s.c2+')"></div></div></div>';
+    }).join("");
+    $("bars").innerHTML=html;
+    if(S.affName){ show($("affRow")); $("affName").textContent=S.affName; var a=clamp(S.aff); $("vAff").textContent=a; $("bAff").style.width=a+"%"; }
+    else hide($("affRow"));
     var box=$("invItems"); box.innerHTML="";
     if(!S.inv.length){ box.innerHTML='<span class="chip empty">비어 있음</span>'; }
     else S.inv.forEach(function(it){ var s=document.createElement("span"); s.className="chip"; s.textContent=it; box.appendChild(s); });
   }
+  function findOriginLabel(key){ for(var i=0;i<WORLD.origins.length;i++){ if(WORLD.origins[i].key===key) return WORLD.origins[i].label; } return key; }
+
   function renderScene(text){
     var sc=$("scene"); sc.innerHTML="";
     var node=document.createElement("div"); node.textContent=text; sc.appendChild(node);
@@ -358,23 +517,23 @@ body {
   }
   function renderEnding(kind){
     var t=$("scene"); var d=document.createElement("div");
-    d.style.marginTop="18px"; d.style.paddingTop="14px"; d.style.borderTop="2px solid #8a6d3b";
-    d.style.textAlign="center"; d.style.color="#5a3e1b";
-    var head = kind==="사망" ? "終 — 무림행, 여기서 막을 내리다" : "完 — 한 편의 이야기가 끝나다";
-    d.innerHTML='<div style="font-size:18px;letter-spacing:4px;margin-bottom:6px;">'+head+'</div><div style="font-size:12px;color:#9a7a45;">제'+S.turn+'막까지의 여정이 마무리되었습니다.</div>';
-    var btn=document.createElement("button"); btn.className="btn-start"; btn.style.marginTop="14px"; btn.textContent="새 이야기 시작";
-    btn.addEventListener("click", function(){ clearSave(); location.reload(); });
+    d.style.marginTop="18px"; d.style.paddingTop="14px"; d.style.borderTop="2px solid var(--accent)";
+    d.style.textAlign="center"; d.style.color="var(--accent)";
+    var head = kind==="사망" ? "終 — 이야기, 여기서 막을 내리다" : "完 — 한 편의 이야기가 끝나다";
+    d.innerHTML='<div style="font-size:18px;letter-spacing:4px;margin-bottom:6px;">'+head+'</div><div style="font-size:12px;color:var(--muted);">제'+S.turn+'막까지의 여정이 마무리되었습니다.</div>';
+    var btn=document.createElement("button"); btn.className="btn-start"; btn.style.marginTop="14px"; btn.textContent="새 이야기 고르기";
+    btn.addEventListener("click", function(){ clearSave(); enterSelect(); });
     d.appendChild(btn); t.appendChild(d);
     $("freeInput").disabled=true; $("btnSend").disabled=true;
-    $("freeInput").placeholder="이야기가 완결되었습니다. '새 이야기 시작'을 눌러 주세요.";
+    $("freeInput").placeholder="이야기가 완결되었습니다.";
   }
   function renderToast(effects){
     var t=$("toast"); t.innerHTML="";
     if(!effects) return;
-    var msgs=[]; var map={hp:"체력",nei:"내공",mu:"무공",charm:"매력",fame:"명성",gold:"은전",aff:"연심"};
-    ["hp","nei","mu","charm","fame","gold","aff"].forEach(function(k){
-      var d=effects[k]; if(typeof d==="number" && d!==0){ msgs.push(map[k]+" "+(d>0?"+":"")+d); }
-    });
+    var map={}; WORLD.stats.forEach(function(s){ map[s.key]=s.label; }); map.aff=WORLD.affLabel||"연심";
+    var msgs=[];
+    WORLD.stats.forEach(function(s){ var d=effects[s.key]; if(typeof d==="number" && d!==0) msgs.push(s.label+" "+(d>0?"+":"")+d); });
+    if(typeof effects.aff==="number" && effects.aff!==0) msgs.push(map.aff+" "+(effects.aff>0?"+":"")+effects.aff);
     (effects.add_items||[]).forEach(function(i){ msgs.push("획득: "+i); });
     (effects.remove_items||[]).forEach(function(i){ msgs.push("잃음: "+i); });
     msgs.forEach(function(m){ var s=document.createElement("span"); s.textContent=m; t.appendChild(s); });
@@ -389,34 +548,41 @@ body {
 
   // ---------- prompt ----------
   function stateSummary(){
-    return "주인공: "+S.name+" ("+S.gender+", "+S.origin+")\n"+
-      "능력치 — 체력 "+S.hp+"/100, 내공 "+S.nei+", 무공 "+S.mu+", 매력 "+S.charm+", 명성 "+S.fame+", 은전 "+S.gold+"\n"+
-      (S.affName? ("연심 상대: "+S.affName+" (호감도 "+S.aff+"/100)\n") : "")+
+    var line=WORLD.stats.map(function(s){ return s.label+" "+(S.stats[s.key]!=null?S.stats[s.key]:s.init); }).join(", ");
+    return "주인공: "+S.name+" ("+S.gender+", "+findOriginLabel(S.origin)+")\n"+
+      "능력치 — "+line+"\n"+
+      (S.affName? (WORLD.affLabel+" 상대: "+S.affName+" ("+S.aff+"/100)\n") : "")+
       "소지품: "+(S.inv.length? S.inv.join(", ") : "없음")+"\n현재 막: 제"+S.turn+"막";
   }
   function pacingHint(){
     var t=S.turn, T=TARGET_TURNS;
     if(t<=Math.round(T*0.18)) return "발단 단계입니다. 세계와 인물을 소개하고 주인공의 동기와 첫 사건을 제시하세요. 서두르지 말고 분위기를 쌓으세요.";
-    if(t<=Math.round(T*0.5))  return "전개 단계입니다. 갈등을 키우고 연심 상대와의 관계를 진전시키며 복선을 심으세요.";
+    if(t<=Math.round(T*0.5))  return "전개 단계입니다. 갈등을 키우고 관계를 진전시키며 복선을 심으세요.";
     if(t<=Math.round(T*0.72)) return "위기 단계입니다. 중대한 시련·배신·어려운 선택을 던지고 긴장을 끌어올리세요. 복선을 회수하기 시작하세요.";
     if(t<=Math.round(T*0.9))  return "절정 단계입니다. 최대의 대결과 감정의 정점으로 모든 갈등을 한 점에 모으세요. 곧 결말로 향하세요.";
-    if(t<T+4) return "결말 단계입니다. 남은 실타래를 모두 수렴시켜 이번 1~3턴 안에 만족스럽게 완결(ending:true)하세요. 로맨스와 주된 갈등을 함께 매듭짓고 에필로그를 주세요.";
+    if(t<T+4) return "결말 단계입니다. 남은 실타래를 모두 수렴시켜 이번 1~3턴 안에 만족스럽게 완결(ending:true)하세요. 주된 갈등과 관계를 함께 매듭짓고 에필로그를 주세요.";
     return "[강제 마무리] 이야기가 충분히 길어졌습니다. 이번 턴에 반드시 ending:true로 완결하고 충실한 에필로그를 작성하세요.";
   }
-  var RULES =
-    "당신은 한국어 무협 로맨스 텍스트 RPG의 게임마스터이자, 한 편의 완결된 중편소설을 설계하는 작가입니다. 강호(江湖)를 배경으로 검과 내공·문파·은원·로맨스가 얽힌 이야기를 만듭니다.\n"+
-    "■ 작품 구조: 이 이야기는 약 "+TARGET_TURNS+"턴 안팎으로 완결되는 한 편의 작품입니다. 발단→전개→위기→절정→결말의 5단 구성을 따르세요. 매 턴 주어지는 '현재 단계/진행도'에 맞춰 밀도와 긴장을 조절하고, 후반엔 흩어진 실타래(주적·연심·비급·가문의 비밀 등)를 하나의 결말로 수렴시켜 목표 턴 부근에서 반드시 만족스럽게 마무리하세요.\n"+
-    "■ 서술: 1) 매 턴 한국어 5~8문장(한 단락)으로 생생히 묘사. 무협 정취를 살리되 과하지 않게. 2) 행동 결과를 능력치 변화(보통 -15~+15)로 반영, 이유 없는 변화 금지. 3) 연심 상대를 초중반에 등장시켜 단계적으로 진전, 결말에서 로맨스도 매듭. 처음 등장 시 romance_name에 이름. 4) 항상 2~4개 선택지 제시(자유 입력도 가능 전제), 단 결말 후엔 빈 배열. 5) 위험/전투 시 체력 감소, 0이면 사망 결말. 과도하게 선정적인 묘사는 피하고 분위기 위주. 6) 매 턴 memory에 핵심 연대기를 600자 이내로 갱신(인물·관계·사건·목표·복선·단서·세계관·연심 변화 보존). 7) phase에 현재 단계(발단/전개/위기/절정/결말), 완전히 끝나면 ending:true와 충실한 에필로그.\n"+
-    "effects 수치는 변화량(델타)이며 변화 없으면 0입니다.";
+  function rules(){
+    var keyGuide=WORLD.stats.map(function(s){ return s.label+"="+s.key; }).join(", ");
+    var romanceLine = WORLD.romance
+      ? "3) "+WORLD.affLabel+" 상대(주요 조연)를 초중반에 등장시켜 단계적으로 관계를 진전시키고 결말에서 매듭지으세요. 처음 등장 시 effects.romance_name에 그 이름을 넣고, 이후 관계 변화는 effects.aff(-15~+15)로 표현하세요. "
+      : "3) 매력적인 주요 조연들을 등장시켜 관계와 갈등을 엮으세요. ";
+    var hpLabel = (function(){ for(var i=0;i<WORLD.stats.length;i++){ if(WORLD.stats[i].hp) return WORLD.stats[i].label; } return "체력"; })();
+    return "당신은 한국어 "+WORLD.genre+" 인터랙티브 웹소설의 게임마스터이자, 한 편의 완결된 중편소설을 설계하는 작가입니다. "+WORLD.genre_desc+"\n"+
+      "■ 작품 구조: 이 이야기는 약 "+TARGET_TURNS+"턴 안팎으로 완결되는 한 편의 작품입니다. 발단→전개→위기→절정→결말의 5단 구성을 따르세요. 매 턴 주어지는 '현재 단계/진행도'에 맞춰 밀도와 긴장을 조절하고, 후반엔 흩어진 실타래(주적·관계·비밀·목표 등)를 하나의 결말로 수렴시켜 목표 턴 부근에서 반드시 만족스럽게 마무리하세요.\n"+
+      "■ 서술: 1) 매 턴 한국어 5~8문장(한 단락)으로 생생히 묘사하세요. 장르의 정취를 살리되 과하지 않게. 2) 행동 결과를 능력치 변화(보통 -15~+15)로 effects에 반영하고, 이유 없는 변화는 금지합니다. "+romanceLine+"4) 항상 2~4개의 선택지를 제시하세요(플레이어의 자유 입력도 가능), 단 결말 후엔 빈 배열. 5) 위험/전투 시 "+hpLabel+"을 감소시키고, 0이 되면 사망(나쁜 결말) 처리하세요. 과도하게 선정적인 묘사는 피하고 분위기 위주로. 6) 매 턴 memory에 핵심 연대기를 600자 이내로 갱신(인물·관계·사건·목표·복선·단서·세계관·감정 변화 보존). 7) phase에 현재 단계(발단/전개/위기/절정/결말)를 넣고, 완전히 끝나면 ending:true와 충실한 에필로그.\n"+
+      "■ effects 키 안내(모든 수치는 변화량 델타, 없으면 0 또는 생략): "+keyGuide+(WORLD.romance? ", "+WORLD.affLabel+"=aff":"")+". add_items/remove_items로 소지품을 변경하세요.";
+  }
 
   function buildPrompt(action){
     var hist = S.history.slice(-4).map(function(h){ return (h.role==="you"?"[플레이어 행동] ":"[장면] ")+h.text; }).join("\n\n");
-    var p = RULES + "\n\n=== 현재 상태 ===\n"+stateSummary()+
+    var p = rules() + "\n\n=== 현재 상태 ===\n"+stateSummary()+
       "\n진행도: "+S.turn+"/"+TARGET_TURNS+"턴. 페이싱 지시: "+pacingHint()+
       "\n\n=== 지금까지의 연대기 (장기 기억) ===\n"+(S.memory||"(아직 없음 — 이야기의 시작)")+
       "\n\n=== 바로 직전 전개 ===\n"+(hist||"(없음)")+"\n\n";
     if(action===null){
-      p += "=== 지시 ===\n게임의 첫 장면(발단)을 시작하세요. 주인공의 출신("+S.origin+")에 어울리는 도입부 사건과 함께, 약 "+TARGET_TURNS+"턴 뒤 완결될 한 편의 이야기로서 핵심 갈등의 씨앗과 강호로 나아가는 계기를 심으세요.";
+      p += "=== 지시 ===\n게임의 첫 장면(발단)을 시작하세요. 주인공의 출신("+findOriginLabel(S.origin)+")에 어울리는 도입부 사건과 함께, 약 "+TARGET_TURNS+"턴 뒤 완결될 한 편의 이야기로서 핵심 갈등의 씨앗과 모험으로 나아가는 계기를 심으세요.";
     } else {
       p += "=== 플레이어의 이번 행동 ===\n\""+action+"\"\n\n이 행동의 결과로 이야기를 이어가세요. 능력치/소지품 변화를 effects에 반영하세요.";
     }
@@ -424,22 +590,24 @@ body {
   }
 
   // ---------- Gemini API ----------
-  var SCHEMA = {
-    type:"OBJECT",
-    properties:{
-      scene:{type:"STRING"},
-      choices:{type:"ARRAY", items:{type:"STRING"}},
-      effects:{type:"OBJECT", properties:{
-        hp:{type:"INTEGER"}, nei:{type:"INTEGER"}, mu:{type:"INTEGER"}, charm:{type:"INTEGER"},
-        fame:{type:"INTEGER"}, gold:{type:"INTEGER"}, aff:{type:"INTEGER"},
-        add_items:{type:"ARRAY", items:{type:"STRING"}},
-        remove_items:{type:"ARRAY", items:{type:"STRING"}},
-        romance_name:{type:"STRING"}
-      }},
-      memory:{type:"STRING"}, phase:{type:"STRING"}, ending:{type:"BOOLEAN"}
-    },
-    required:["scene","choices","effects","memory","phase","ending"]
-  };
+  function buildSchema(){
+    var props={};
+    WORLD.stats.forEach(function(s){ props[s.key]={type:"INTEGER"}; });
+    props.aff={type:"INTEGER"};
+    props.add_items={type:"ARRAY", items:{type:"STRING"}};
+    props.remove_items={type:"ARRAY", items:{type:"STRING"}};
+    props.romance_name={type:"STRING"};
+    return {
+      type:"OBJECT",
+      properties:{
+        scene:{type:"STRING"},
+        choices:{type:"ARRAY", items:{type:"STRING"}},
+        effects:{type:"OBJECT", properties:props},
+        memory:{type:"STRING"}, phase:{type:"STRING"}, ending:{type:"BOOLEAN"}
+      },
+      required:["scene","choices","effects","memory","phase","ending"]
+    };
+  }
   var SAFETY = ["HARM_CATEGORY_HARASSMENT","HARM_CATEGORY_HATE_SPEECH","HARM_CATEGORY_SEXUALLY_EXPLICIT","HARM_CATEGORY_DANGEROUS_CONTENT"]
     .map(function(c){ return {category:c, threshold:"BLOCK_ONLY_HIGH"}; });
 
@@ -447,7 +615,7 @@ body {
     var url = "https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(CFG.model)+":generateContent?key="+encodeURIComponent(CFG.key);
     var body = {
       contents:[{ role:"user", parts:[{text:prompt}] }],
-      generationConfig:{ temperature:1.0, topP:0.95, maxOutputTokens:2048, responseMimeType:"application/json", responseSchema:SCHEMA },
+      generationConfig:{ temperature:1.0, topP:0.95, maxOutputTokens:2048, responseMimeType:"application/json", responseSchema:buildSchema() },
       safetySettings:SAFETY
     };
     var res = await fetch(url, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
@@ -479,7 +647,6 @@ body {
     attempt=attempt||0;
     try{ return parseJSON(await geminiGenerate(buildPrompt(action))); }
     catch(err){
-      // JSON 파싱 실패 등 일시 오류만 1회 재시도 (네트워크/키 오류는 그대로 전달)
       if(attempt<1 && /JSON|Unexpected|비어/i.test(err.message)) return callAI(action, attempt+1);
       throw err;
     }
@@ -487,21 +654,17 @@ body {
 
   function applyEffects(e){
     if(!e) return;
-    if(typeof e.hp==="number") S.hp=clamp(S.hp+e.hp);
-    if(typeof e.nei==="number") S.nei=clamp(S.nei+e.nei);
-    if(typeof e.mu==="number") S.mu=clamp(S.mu+e.mu);
-    if(typeof e.charm==="number") S.charm=clamp(S.charm+e.charm);
-    if(typeof e.fame==="number") S.fame=clamp(S.fame+e.fame);
-    if(typeof e.gold==="number") S.gold=clamp(S.gold+e.gold);
+    WORLD.stats.forEach(function(s){ if(typeof e[s.key]==="number") S.stats[s.key]=clamp((S.stats[s.key]||0)+e[s.key]); });
     if(e.romance_name && !S.affName) S.affName=String(e.romance_name);
     if(typeof e.aff==="number" && S.affName) S.aff=clamp(S.aff+e.aff);
     (e.add_items||[]).forEach(function(i){ i=String(i); if(i && S.inv.indexOf(i)<0) S.inv.push(i); });
     (e.remove_items||[]).forEach(function(i){ i=String(i); var k=S.inv.indexOf(i); if(k>=0) S.inv.splice(k,1); });
   }
+  function hpDead(){ for(var i=0;i<WORLD.stats.length;i++){ if(WORLD.stats[i].hp) return (S.stats[WORLD.stats[i].key]||0)<=0; } return false; }
   function showErr(msg){ var e=$("gameErr"); e.textContent=msg; show(e); }
 
   async function startStory(){
-    hide($("gameErr")); busy(true); renderScene("강호의 바람이 불어옵니다…");
+    hide($("gameErr")); busy(true); renderScene("이야기의 막이 오릅니다…");
     try{
       var data=await callAI(null);
       if(typeof data.memory==="string" && data.memory.trim()) S.memory=data.memory.trim();
@@ -531,22 +694,23 @@ body {
       S.lastScene=data.scene||""; S.lastChoices=(data.ending?[]:(data.choices||[]));
       renderScene(data.scene||"(장면을 불러오지 못했습니다)"); renderToast(data.effects);
       renderChoices(S.lastChoices);
-      if(data.ending===true || S.hp<=0){ S.ended=true; renderChoices([]); renderEnding(S.hp<=0?"사망":"완결"); }
+      if(data.ending===true || hpDead()){ S.ended=true; renderChoices([]); renderEnding(hpDead()?"사망":"완결"); }
       renderStats(); saveGame();
     }catch(e){
-      // 실패 시 방금 추가한 행동 표시 롤백 느낌은 두되, 히스토리는 유지(맥락). 재시도 안내.
       showErr("이야기를 이어가지 못했습니다. '행동'을 다시 눌러 재시도해 주세요. ("+e.message+")");
     }finally{ busy(false); }
   }
 
   function resumeGame(sv){
-    S.name=sv.name; S.gender=sv.gender; S.origin=sv.origin;
-    S.hp=sv.hp; S.nei=sv.nei; S.mu=sv.mu; S.charm=sv.charm; S.fame=sv.fame; S.gold=sv.gold;
+    WORLD=findWorld(sv.world); applyTheme(WORLD.theme);
+    S.world=sv.world; S.name=sv.name; S.gender=sv.gender; S.origin=sv.origin;
+    S.stats=sv.stats||{}; WORLD.stats.forEach(function(s){ if(S.stats[s.key]==null) S.stats[s.key]=s.init; });
     S.affName=sv.affName||""; S.aff=sv.aff||0; S.inv=sv.inv||[]; S.turn=sv.turn||1;
     S.phase=sv.phase||"발단"; S.ended=!!sv.ended;
     S.memory=sv.memory||""; S.history=sv.history||[];
     S.lastScene=sv.lastScene||""; S.lastChoices=sv.lastChoices||[];
-    hide($("setup")); hide($("config")); show($("game"));
+    hide($("setup")); hide($("config")); hide($("select")); show($("game"));
+    initGameChrome();
     renderStats(); renderScene(S.lastScene||"이야기를 이어갑니다…");
     renderChoices(S.ended?[]:S.lastChoices);
     if(S.ended) renderEnding("완결");
@@ -557,7 +721,8 @@ body {
 
   // ---------- boot ----------
   loadCfg();
-  if(CFG.key){ hide($("config")); enterSetup(); }
+  applyTheme(DEFAULT_THEME);
+  if(CFG.key){ hide($("config")); enterSelect(); }
   else { show($("config")); }
 
 })();
